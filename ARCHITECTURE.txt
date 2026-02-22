@@ -1,0 +1,522 @@
+================================================================================
+SERIAL SYSTEM
+ARSITEKTUR DAN FLOW APLIKASI (AKTUAL)
+================================================================================
+
+Terakhir diperbarui: 2026-02-19
+Status dokumen: source of truth arsitektur dan flow aplikasi saat ini
+Basis validasi:
+- routes/api.php, routes/web.php
+- app/Http/* (controllers, middleware, requests)
+- app/Services/*, app/Models/*
+- database/migrations/*, database/seeders/*
+- resources/views/admin/*
+
+
+================================================================================
+1) TUJUAN SISTEM
+================================================================================
+
+Serial System adalah backend license server + admin panel untuk:
+- Mengelola aplikasi yang dilisensikan.
+- Mengelola paket lisensi (trial dan paid).
+- Membuat serial activation / renewal sesuai pesanan user.
+- Menangani aktivasi trial, aktivasi paid, perpanjangan, cek status, dan manajemen device.
+- Menyediakan kontrol admin berbasis role/permission.
+
+Model bisnis yang diimplementasikan saat ini:
+- User memesan ke admin di luar aplikasi.
+- Admin membuat serial pesanan di menu `Kode Aktivasi`.
+- Admin memberi serial tersebut ke user (di luar aplikasi).
+- User memasukkan serial di desktop app saat aktivasi paid.
+- Trial dilakukan tanpa serial (input user hanya email, metadata device dikirim app).
+
+
+================================================================================
+2) STACK TEKNOLOGI
+================================================================================
+
+Backend:
+- PHP ^8.1
+- Laravel 10.x
+- Eloquent ORM
+
+Security dan auth:
+- Session auth untuk admin (`guard: admin`)
+- spatie/laravel-permission 6.0
+- Gate super admin bypass via `Gate::before`
+- Header-based application validation
+- Bearer token untuk protected license API
+
+Frontend admin:
+- Blade server-rendered
+- Vite + ES module
+- Tailwind CSS + @tailwindcss/forms
+- Vanilla JS untuk interaksi UI
+
+Testing:
+- PHPUnit 10
+- Feature test utama di `tests/Feature/LicenseApiTest.php`
+
+
+================================================================================
+3) KOMPONEN ARSITEKTUR
+================================================================================
+
+3.1 Admin Web App (session-based)
+- Route: `routes/web.php`
+- Fitur: admin, aplikasi, paket, kode aktivasi, lisensi, docs
+- Authorization: middleware `can:*` per modul
+
+3.2 Public License API v1 (stateless)
+- Route: `routes/api.php`
+- Endpoint utama: activate, trial, status, renew, devices
+- Aplikasi diverifikasi via header `X-Application-Code` (+ optional token)
+
+3.3 Background Maintenance
+- Scheduler di `app/Console/Kernel.php`
+- Sinkron status lisensi expired dan cleanup token revoked
+
+
+================================================================================
+4) STRUKTUR PROJECT RINGKAS
+================================================================================
+
+`serial-system/`
+- `app/Console/Commands/`
+- `app/Exceptions/Handler.php`
+- `app/Http/Controllers/Admin/*`
+- `app/Http/Controllers/Api/V1/LicenseController.php`
+- `app/Http/Middleware/*`
+- `app/Http/Requests/*`
+- `app/Models/*`
+- `app/Services/*`
+- `app/Support/*`
+- `routes/web.php`, `routes/api.php`
+- `database/migrations/*`, `database/seeders/*`
+- `resources/views/admin/*`
+- `tests/Feature/LicenseApiTest.php`
+
+
+================================================================================
+5) DOMAIN MODEL DAN ATURAN BISNIS
+================================================================================
+
+5.1 Application
+- Tabel: `applications`
+- Kunci: `code` unik
+- Bisa aktif/nonaktif (`is_active`)
+- Bisa memakai application token (`token_hash`, `token_encrypted`)
+- Jika `token_hash` terisi, header `X-Application-Token` wajib valid
+
+5.2 Plan
+- Tabel: `plans`
+- Terikat ke application
+- Properti inti: `term_days`, `seat_limit`, `is_trial`, `is_active`
+- Trial dan paid dipisahkan lewat `is_trial`
+
+5.3 SerialNumber
+- Tabel: `serial_numbers`
+- Tipe: `initial` (aktivasi baru), `renew` (perpanjangan)
+- Status: `available`, `used`, `void`
+- Secret storage:
+  - `serial_hash` (validasi)
+  - `serial_encrypted` (reveal di admin UI)
+  - `serial_last4` (display masked)
+- Metadata order: `customer_email`, `order_note`
+
+5.4 License
+- Tabel: `licenses` (UUID primary key)
+- Status: `active`, `expired`, `revoked`
+- Relasi ke account, plan, application, issued serial (opsional)
+- Masa berlaku: `starts_at_utc`, `expires_at_utc`
+
+5.5 DeviceBinding
+- Tabel: `device_bindings`
+- Unik per (`license_id`, `fingerprint_hash`)
+- Status device: `active` / `inactive`
+- Dipakai untuk enforcement seat limit
+
+5.6 TrialClaim
+- Tabel: `trial_claims`
+- Unik per (`application_id`, `device_hash`)
+- Membatasi trial 1x per device per application
+
+5.7 LicenseToken
+- Tabel: `license_tokens`
+- Token plaintext dibuat sekali (`tok_` + random), disimpan hash
+- Expired default 30 hari dari issue
+
+5.8 Admin + Permission + Audit
+- Admin auth di tabel `admins`
+- Role/permission via spatie tables
+- Audit log ke tabel `audit_logs` untuk aksi penting tertentu
+
+
+================================================================================
+6) DATA SCHEMA (AKTUAL)
+================================================================================
+
+6.1 Tabel domain utama
+- `applications`: code, name, token_hash, token_encrypted, is_active
+- `accounts`: application_id + email (unik kombinasi)
+- `plans`: application_id, code, name, term_days, seat_limit, is_trial, is_active
+- `serial_numbers`: application_id, plan_id, serial_hash, serial_encrypted, serial_last4, customer_email, order_note, type, status, used_at_utc
+- `licenses`: id(uuid), application_id, issued_serial_number_id, account_id, plan_id, status, starts_at_utc, expires_at_utc, revoked_at_utc
+- `license_tokens`: license_id, token_hash, issued_at_utc, expires_at_utc, revoked_at_utc
+- `device_bindings`: license_id, fingerprint_hash, label, platform, status, first_seen_at_utc, deactivated_at_utc
+- `trial_claims`: application_id, device_hash
+- `admins`: name, email, password, is_active
+- `audit_logs`: admin_id, action, target_type, target_id, context_json
+
+6.2 Migrasi tambahan terbaru yang aktif
+- `2026_02_19_000001_add_token_encrypted_to_applications_table.php`
+- `2026_02_19_190000_add_order_metadata_to_serial_numbers_table.php`
+- `2026_02_19_200000_add_serial_encrypted_to_serial_numbers_table.php`
+
+
+================================================================================
+7) AUTENTIKASI DAN OTORISASI
+================================================================================
+
+7.1 Admin panel
+- Guard: `admin` (session)
+- Login throttled by limiter `admin-login` (10/min per email+ip)
+- Middleware `admin.active` memaksa hanya admin aktif yang bisa lanjut
+- Permission gate:
+  - `view-dashboard`
+  - `view-docs`
+  - `manage-admins`
+  - `manage-applications`
+  - `manage-plans`
+  - `manage-serials`
+  - `manage-licenses`
+  - `manage-devices`
+- `super_admin` bypass semua ability via `Gate::before`
+
+7.2 License API
+- `resolve.application`:
+  - Validasi `X-Application-Code` wajib
+  - Application harus aktif
+  - Jika app punya `token_hash`, `X-Application-Token` wajib cocok
+- `auth.license`:
+  - Validasi `Authorization: Bearer <token>`
+  - Cek hash token, not revoked, not expired
+  - Cek token milik application yang sama (`TOKEN_APP_MISMATCH` jika beda)
+
+
+================================================================================
+8) RATE LIMITING DAN REQUEST PIPELINE
+================================================================================
+
+8.1 Rate limiter
+- `api`: 60/min
+- `license-critical`: 15/min keyed by `ip + X-Application-Code + path`
+- `admin-login`: 10/min keyed by `email + ip`
+
+8.2 API pipeline
+- `GET /v1/ping`:
+  - hanya middleware group `api`
+- `POST /v1/licenses/activate` dan `/trial`:
+  - `api` -> `resolve.application` -> `throttle:license-critical`
+- Protected endpoints:
+  - `api` -> `resolve.application` -> `auth.license`
+
+8.3 Web pipeline
+- `/` redirect ke `admin.login`
+- Auth pages: `guest:admin`
+- Protected admin pages: `auth:admin` + `admin.active` + `can:*`
+
+
+================================================================================
+9) WEB ROUTES DAN MENU ADMIN
+================================================================================
+
+9.1 Auth admin
+- `GET /admin/login`
+- `POST /admin/login`
+- `POST /admin/logout`
+- Forgot/reset password routes tersedia
+
+9.2 Menu utama admin (sesuai UI saat ini)
+- `Dashboard` -> `GET /admin/dashboard`
+- `Admin` -> `GET/POST/PUT /admin/admins`
+- `Aplikasi` -> `GET/POST/PUT /admin/applications`
+- `Paket` -> `GET/POST/PUT /admin/plans`
+- `Kode Aktivasi` -> `GET /admin/serials`, generate/reveal/void
+- `Lisensi` -> `GET /admin/licenses`, detail, toggle revoke
+- `Docs` -> `GET /admin/docs`
+
+9.3 Titik penting menu `Kode Aktivasi`
+- Menu inilah titik resmi pembuatan serial pesanan user.
+- Field generate: `application_id`, `plan_id`, `type`, `quantity`, `customer_email`, `order_note`
+- Plan yang bisa dipilih saat generate dibatasi: active + non-trial.
+- Tabel serial menampilkan serial dalam bentuk masked.
+- Tombol `Lihat Serial` memanggil endpoint reveal untuk membuka serial asli.
+- Setelah reveal, serial bisa di-copy untuk dikirim ke user.
+
+
+================================================================================
+10) API ROUTES V1 (AKTUAL)
+================================================================================
+
+10.1 Health endpoint
+- `GET /v1/ping`
+- Response: `{ "ok": true, "time": "ISO8601" }`
+
+10.2 License endpoints
+1. `POST /v1/licenses/activate`
+- Input:
+  - `serial` (required)
+  - `email` (required)
+  - `device.fingerprint_hash`, `device.label`, `device.platform` (required)
+- Catatan UX:
+  - User paid mengisi email + serial activation.
+  - Data device dikirim otomatis oleh desktop app.
+
+2. `POST /v1/licenses/trial`
+- Input:
+  - `email` (required)
+  - `device.*` (required)
+- Catatan UX:
+  - User trial mengisi email.
+  - Data device dikirim otomatis oleh desktop app.
+
+3. `GET /v1/licenses/status` (Bearer required)
+
+4. `POST /v1/licenses/renew` (Bearer required)
+- Input: `renew_serial`
+
+5. `POST /v1/licenses/devices/deactivate` (Bearer required)
+- Input: `device_fingerprint_hash`
+
+6. `GET /v1/licenses/devices` (Bearer required)
+
+
+================================================================================
+11) FLOW BISNIS END-TO-END
+================================================================================
+
+11.1 Flow A - Admin membuat serial pesanan user
+1. Admin membuka menu `Kode Aktivasi`.
+2. Admin memilih Application + Paket paid + jenis serial (aktivasi/perpanjangan).
+3. Admin isi email user dan catatan pesanan.
+4. Sistem generate serial plaintext, simpan:
+   - hash untuk validasi API
+   - encrypted untuk reveal
+   - metadata order
+5. Admin melihat daftar serial dalam format masked.
+6. Admin klik `Lihat Serial` jika perlu melihat/copy serial asli.
+7. Serial asli diberikan ke user di luar aplikasi.
+
+11.2 Flow B - Trial activation
+1. Client kirim `email + device`.
+2. System cari plan trial aktif di application terkait.
+3. Cek `trial_claims` (application + device) agar 1 device hanya trial sekali.
+4. Buat account (jika belum ada), buat license trial, bind device.
+5. Issue API token baru.
+6. Return payload license + `api_token`.
+
+11.3 Flow C - Paid activation (serial initial)
+1. Client kirim `serial + email + device`.
+2. System validasi serial initial:
+   - hash cocok
+   - application cocok
+   - status bukan void
+   - plan bukan trial dan aktif
+3. Jika serial `available`:
+   - create account
+   - create license
+   - mark serial `used`
+4. Jika serial sudah `used`:
+   - hanya boleh dipakai email yang sama dengan owner license
+   - email beda -> `SERIAL_EMAIL_MISMATCH`
+5. Cek seat limit:
+   - jika device baru dan seat penuh -> `SEAT_LIMIT_REACHED`
+6. Bind device aktif (create/update)
+7. Issue API token
+8. Return license summary + token
+
+11.4 Flow D - Renewal (serial renew)
+1. Client kirim `renew_serial` dengan bearer token license.
+2. System tolak jika license revoked.
+3. Validasi serial renew:
+   - status available
+   - application cocok
+   - seat_limit plan renew harus sama dengan license aktif
+4. Hitung expiry baru:
+   - base = max(now, expiry lama)
+   - expiry baru = base + term_days plan renew
+5. Update plan_id license ke plan renew dan mark serial renew jadi used.
+
+11.5 Flow E - Device management
+- Deactivate:
+  - validasi device aktif pada license
+  - ubah status ke inactive + set deactivated timestamp
+- List devices:
+  - return semua binding dengan status (`deactivated` untuk inactive)
+  - return `seat_limit` dan `seat_used`
+
+11.6 Flow F - Status check
+1. Bearer token diverifikasi.
+2. Jika license revoked -> `LICENSE_REVOKED`.
+3. Jika expiry lewat:
+   - status lisensi disinkronkan ke `expired` bila perlu
+   - return `LICENSE_EXPIRED`
+4. Jika valid -> return status + days remaining + seat usage.
+
+
+================================================================================
+12) SERVIS LAYER (ROLE PER CLASS)
+================================================================================
+
+- `LicenseActivationService`: aktivasi paid + seat enforcement + token issue
+- `TrialLicenseService`: trial lifecycle + trial claim enforcement
+- `LicenseRenewalService`: validasi renew serial + perpanjangan expiry
+- `LicenseStatusService`: health status lisensi saat runtime API
+- `DeviceBindingService`: deactivate/list device binding
+- `LicenseTokenService`: generate token + persist hash/expiry
+- `LicensePresenter`: format response lisensi
+- `AuditLogService`: simpan audit log aksi admin tertentu
+
+
+================================================================================
+13) PENGELOLAAN SECRET DAN KEAMANAN DATA
+================================================================================
+
+13.1 Secret handling
+- Serial activation:
+  - disimpan sebagai `serial_hash`
+  - plaintext tidak disimpan langsung
+  - reveal menggunakan `serial_encrypted`
+- Application key:
+  - validasi pakai `token_hash`
+  - reveal key memakai `token_encrypted`
+- API license token:
+  - hanya hash yang disimpan
+  - plaintext token hanya diketahui saat issue response
+
+13.2 Headers dan anti mismatch
+- Header application wajib di semua route lisensi.
+- Token lisensi harus berasal dari application yang sama.
+
+13.3 Cache control untuk reveal
+- Endpoint reveal token/serial memberi header no-store/no-cache.
+
+
+================================================================================
+14) SCHEDULER DAN MAINTENANCE JOBS
+================================================================================
+
+14.1 `licenses:sync-statuses` (setiap 5 menit)
+- Ubah lisensi active yang expired menjadi expired.
+- Revoke token yang sudah melewati expiry.
+
+14.2 `licenses:cleanup-tokens --days=60` (harian)
+- Hapus token revoked yang lebih lama dari threshold hari.
+
+
+================================================================================
+15) SEEDER DAN BOOTSTRAP DATA
+================================================================================
+
+15.1 `AdminRolePermissionSeeder`
+- Membuat permission standar admin.
+- Membuat role `super_admin` dan `ops_admin`.
+- Membuat default admin:
+  - email: `admin@example.com`
+  - password: `Admin12345`
+
+15.2 `BlaskuIntegrationSeeder`
+- Membuat / update application `BLASKU`.
+- Jika env `BLASKU_APPLICATION_TOKEN` diisi:
+  - `token_hash` diupdate.
+- Membuat katalog plan trial + paid (1 seat dan 5 seat).
+- Membersihkan sample serial lama bawaan seeder.
+- Seeder saat ini tidak mempertahankan daftar sample serial untuk dipakai produksi.
+
+
+================================================================================
+16) MODEL ERROR API
+================================================================================
+
+16.1 Format response error
+- Semua `ApiException` dirender menjadi:
+  - `{ "code": "ERROR_CODE", "message": "..." }`
+- HTTP status mengikuti exception.
+
+16.2 Validation error untuk route `v1/*`
+- Response:
+  - `{ "code": "VALIDATION_ERROR", "message": "<first_error>" }`
+- Status: 422
+
+16.3 Kode error yang aktif di codebase
+- `APPLICATION_INVALID`
+- `TOKEN_INVALID`
+- `TOKEN_APP_MISMATCH`
+- `SERIAL_INVALID`
+- `SERIAL_ALREADY_USED`
+- `SERIAL_EMAIL_MISMATCH`
+- `SEAT_LIMIT_REACHED`
+- `TRIAL_ALREADY_USED`
+- `RENEW_SERIAL_INVALID`
+- `PRODUCT_MISMATCH`
+- `LICENSE_REVOKED`
+- `LICENSE_EXPIRED`
+- `DEVICE_NOT_FOUND`
+- `VALIDATION_ERROR`
+
+
+================================================================================
+17) OBSERVABILITY, AUDIT, DAN TESTING
+================================================================================
+
+17.1 Audit log
+- Aksi yang saat ini diaudit secara eksplisit:
+  - `application.token.rotate`
+  - `application.token.reveal`
+  - `serial.generate`
+  - `serial.reveal`
+  - `serial.void`
+  - `license.revoke` / `license.unrevoke`
+- Storage: tabel `audit_logs`
+
+17.2 Test coverage yang ada
+- `tests/Feature/LicenseApiTest.php` mencakup:
+  - aktivasi sukses
+  - app mismatch
+  - kewajiban application token
+  - trial pertama/ulang
+  - token invalid / token app mismatch
+  - renew (expired/non-expired)
+  - renew revoked license
+  - seat limit enforcement
+  - serial email boundary
+  - devices list status
+  - permission boundary admin
+
+
+================================================================================
+18) CATATAN IMPLEMENTASI DAN BATASAN SAAT INI
+================================================================================
+
+- Kontrak API v1 dianggap stabil; perubahan incompatible sebaiknya lewat versioning baru.
+- Renewal product matching saat ini berbasis kecocokan `seat_limit`.
+- Aktivasi paid mengizinkan reuse serial yang sudah used hanya untuk email owner yang sama.
+- Trial uniqueness berbasis application + device, bukan email.
+- Sebagian aksi admin sudah diaudit, namun belum semua aksi CRUD punya audit log.
+- Process utama berjalan sinkron (belum memakai queue untuk alur lisensi inti).
+
+
+================================================================================
+19) RINGKASAN FLOW PRODUKSI YANG BERJALAN
+================================================================================
+
+1. User pesan paket ke admin (di luar aplikasi).
+2. Admin membuat serial di menu `Kode Aktivasi` sesuai durasi + seat pesanan.
+3. Admin kirim serial ke user.
+4. User:
+   - Trial: input email (device metadata otomatis dari app).
+   - Paid: input email + serial activation (device metadata otomatis dari app).
+5. License API memvalidasi, menerapkan aturan seat/device, lalu menerbitkan token lisensi.
+
