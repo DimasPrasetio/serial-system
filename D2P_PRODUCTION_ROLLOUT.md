@@ -39,6 +39,8 @@ Gunakan **2 tahap**:
   - `APP_ENV=production`
   - `APP_DEBUG=false`
 - Pastikan Anda tahu cara rollback release sebelumnya.
+- Tentukan versi release berikutnya (`PATCH` / `MINOR` / `MAJOR`) sesuai `RELEASE_VERSIONING.md`.
+- Update file `VERSION` dan `CHANGELOG.md` **di local** sebelum mulai D2P.
 - Pastikan file `.env` production **tetap** memakai setup shared hosting Anda saat ini (tidak perlu Redis):
   - `CACHE_DRIVER=file`
   - `SESSION_DRIVER=file`
@@ -81,6 +83,7 @@ Pastikan file yang ter-upload mencakup:
 - perubahan source code
 - file migration baru
 - file `public/build/*` hasil build lokal
+- file `VERSION` dan `CHANGELOG.md` yang sudah diupdate
 
 ### 3. Jalankan preflight audit integritas data (WAJIB)
 
@@ -120,6 +123,26 @@ Karena `.env` Anda saat ini memakai:
 - `QUEUE_CONNECTION=sync`
 
 Maka **tidak perlu** `queue:restart` atau Supervisor worker.
+
+### 7. Finalisasi release tag (setelah deploy sukses, dilakukan di local)
+
+Setelah smoke test production lulus, buat **annotated git tag** dari commit release yang sudah live:
+
+```bash
+git tag -a vX.Y.Z -m "Release vX.Y.Z"
+git push origin vX.Y.Z
+```
+
+Contoh:
+
+```bash
+git tag -a v1.0.1 -m "Release v1.0.1"
+git push origin v1.0.1
+```
+
+Catatan:
+- Tag dibuat **setelah** D2P sukses (bukan sebelum), agar tag merepresentasikan versi yang benar-benar live.
+- Lihat `RELEASE_VERSIONING.md` untuk aturan bump versi.
 
 ## Smoke Test Setelah D2P
 
