@@ -294,47 +294,13 @@ Laravel akan menjalankan command terjadwal sesuai definisi di `Kernel`.
    - `Once Per Minute` (setiap 1 menit)
 5. Isi command cron
 
-### Command Cron (Template Hostinger Shared)
-
-Gunakan salah satu format berikut (sesuaikan path project Anda):
+### Command Cron (Terverifikasi untuk Project Ini)
 
 ```bash
-/usr/bin/php /home/USERNAME/domains/DOMAIN/public_html/artisan schedule:run >> /dev/null 2>&1
+/usr/bin/php /home/u158832335/domains/elcodelabs.my.id/production/artisan schedule:run >> /dev/null 2>&1
 ```
 
-Atau jika Laravel root Anda **bukan** `public_html` (lebih umum/lebih rapi), misalnya project root terpisah:
-
-```bash
-/usr/bin/php /home/USERNAME/domains/DOMAIN/laravel/artisan schedule:run >> /dev/null 2>&1
-```
-
-### Cara Menentukan Path yang Benar
-
-Jika SSH tersedia:
-
-```bash
-pwd
-which php
-ls -la
-```
-
-Lalu pastikan:
-- path `artisan` benar-benar ada
-- binary PHP CLI valid (sering `/usr/bin/php`)
-
-Jika SSH tidak tersedia:
-- cek lokasi file `artisan` melalui File Manager Hostinger
-- gunakan `php` atau `/usr/bin/php` sesuai yang didukung server Anda
-
-### Opsi Debug Cron (sementara, lalu matikan)
-
-Kalau mau memastikan cron jalan, pakai log file sementara:
-
-```bash
-/usr/bin/php /home/USERNAME/domains/DOMAIN/public_html/artisan schedule:run >> /home/USERNAME/cron-laravel.log 2>&1
-```
-
-Setelah terbukti berjalan normal, ganti kembali ke `>> /dev/null 2>&1`.
+Output normal saat cron berjalan: `INFO No scheduled commands are ready to run.` — ini benar, bukan error.
 
 ### Verifikasi Setelah Set Cron
 
