@@ -1,0 +1,18 @@
+{
+  "resources/css/app.css": {
+    "file": "assets/app-mDe52Hj-.css",
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/css/public.css": {
+    "file": "assets/public-Bw3Dvl7K.css",
+    "src": "resources/css/public.css",
+    "isEntry": true
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-DeBs-x71.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true
+  }
+}
