@@ -38,9 +38,13 @@ Gunakan **2 tahap**:
 - Pastikan environment production memakai:
   - `APP_ENV=production`
   - `APP_DEBUG=false`
-- Pastikan Anda tahu cara rollback release sebelumnya.
-- Tentukan versi release berikutnya (`PATCH` / `MINOR` / `MAJOR`) sesuai `RELEASE_VERSIONING.md`.
-- Update file `VERSION` dan `CHANGELOG.md` **di local** sebelum mulai D2P.
+- Pastikan Anda tahu cara rollback ke tag release sebelumnya.
+- Ikuti workflow di `RELEASE_VERSIONING.md`:
+  - Tentukan jenis release (`PATCH` / `MINOR` / `MAJOR`)
+  - Update `VERSION` dan `CHANGELOG.md` di local
+  - Commit + push ke `main`
+  - Buat dan push annotated tag (`git tag -a vX.Y.Z -m "Release vX.Y.Z" && git push origin vX.Y.Z`)
+- **Tag harus sudah ada di GitHub sebelum memulai D2P.**
 - Pastikan file `.env` production **tetap** memakai setup shared hosting Anda saat ini (tidak perlu Redis):
   - `CACHE_DRIVER=file`
   - `SESSION_DRIVER=file`
@@ -71,19 +75,24 @@ Catatan:
 - Shared hosting sering tidak ideal untuk build asset (`npm ci`, `npm run build`) di server.
 - Upload hasil build (`public/build`) bersama source code release.
 
-### 2. Upload / deploy release ke Hostinger
+### 2. Upload / deploy release ke Hostinger (dari tag)
 
-Pilih salah satu alur:
+Deploy dilakukan **dari tag yang sudah dibuat**, bukan dari branch `main`.
 
-1. Git deploy via SSH (jika Anda gunakan)
-2. Upload ZIP release lalu extract
-3. FTP/SFTP
+**Jika menggunakan Git via SSH di server:**
 
-Pastikan file yang ter-upload mencakup:
-- perubahan source code
+```bash
+git fetch --tags
+git checkout v1.0.1
+```
+
+**Jika menggunakan upload manual (ZIP / FTP / SFTP):**
+
+Pastikan file yang di-upload adalah hasil build dari commit yang sudah di-tag:
+- perubahan source code (sesuai tag `vX.Y.Z`)
 - file migration baru
 - file `public/build/*` hasil build lokal
-- file `VERSION` dan `CHANGELOG.md` yang sudah diupdate
+- file `VERSION` dan `CHANGELOG.md`
 
 ### 3. Jalankan preflight audit integritas data (WAJIB)
 
@@ -124,26 +133,6 @@ Karena `.env` Anda saat ini memakai:
 
 Maka **tidak perlu** `queue:restart` atau Supervisor worker.
 
-### 7. Finalisasi release tag (setelah deploy sukses, dilakukan di local)
-
-Setelah smoke test production lulus, buat **annotated git tag** dari commit release yang sudah live:
-
-```bash
-git tag -a vX.Y.Z -m "Release vX.Y.Z"
-git push origin vX.Y.Z
-```
-
-Contoh:
-
-```bash
-git tag -a v1.0.1 -m "Release v1.0.1"
-git push origin v1.0.1
-```
-
-Catatan:
-- Tag dibuat **setelah** D2P sukses (bukan sebelum), agar tag merepresentasikan versi yang benar-benar live.
-- Lihat `RELEASE_VERSIONING.md` untuk aturan bump versi.
-
 ## Smoke Test Setelah D2P
 
 ### Public
@@ -168,7 +157,12 @@ Catatan:
 
 ### Jika masalah hanya di code (tanpa migration)
 
-- Rollback release aplikasi ke versi sebelumnya
+Checkout ke tag release sebelumnya di server:
+
+```bash
+git fetch --tags
+git checkout v1.0.0
+```
 
 ### Jika migration sudah jalan
 

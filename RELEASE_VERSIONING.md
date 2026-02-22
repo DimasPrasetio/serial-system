@@ -38,16 +38,14 @@ Gunakan format: `MAJOR.MINOR.PATCH`
   - pertimbangkan bump `MAJOR`.
 - Migration schema kompatibel (index, kolom nullable, dsb) biasanya `PATCH` atau `MINOR` tergantung dampak fitur.
 
-## Workflow Release (Best Practice, Minimal)
+## Workflow Release
 
-### Sebelum D2P (di local)
+### 1. Siapkan release di local
 
 1. Tentukan jenis release (`PATCH` / `MINOR` / `MAJOR`)
 2. Update file `VERSION`
-3. Pindahkan catatan perubahan yang siap rilis dari `Unreleased` ke section release baru di `CHANGELOG.md`
-4. Commit perubahan versioning
-
-Contoh:
+3. Pindahkan catatan perubahan dari `[Unreleased]` ke section release baru di `CHANGELOG.md`
+4. Commit dan push ke `main`
 
 ```bash
 git add VERSION CHANGELOG.md
@@ -55,13 +53,9 @@ git commit -m "chore(release): prepare v1.0.1"
 git push origin main
 ```
 
-### D2P (di server / Hostinger)
+### 2. Buat dan push annotated tag
 
-Ikuti panduan di `D2P_PRODUCTION_ROLLOUT.md`.
-
-### Setelah D2P sukses (di local)
-
-Buat tag release **annotated** lalu push:
+Tag dibuat **sebelum D2P** — tag adalah anchor dari versi yang akan di-deploy.
 
 ```bash
 git tag -a v1.0.1 -m "Release v1.0.1"
@@ -69,30 +63,41 @@ git push origin v1.0.1
 ```
 
 Catatan:
-- Tag dibuat **setelah** deploy production sukses (agar tag benar-benar merepresentasikan release yang live)
-- Jangan pakai lightweight tag untuk release production
+- Selalu gunakan **annotated tag** (`-a`), bukan lightweight tag
+- Tag ini yang menjadi referensi deploy di server
+
+### 3. D2P (di server / Hostinger)
+
+Deploy dari tag yang sudah dibuat. Ikuti panduan di `D2P_PRODUCTION_ROLLOUT.md`.
+
+### Jika D2P gagal karena perlu perubahan code
+
+Jangan hapus tag yang sudah ada. Buat fix, lalu rilis versi baru:
+
+- Buat fix di local
+- Bump `PATCH` (mis. `v1.0.1` → `v1.0.2`)
+- Ulangi workflow dari langkah 1
 
 ## Hotfix Workflow
 
 Jika ada bug production yang harus cepat diperbaiki:
 
-1. Buat fix
-2. Bump `PATCH`
-3. Update `CHANGELOG.md`
-4. D2P
-5. Tag release baru
+1. Buat fix di local
+2. Bump `PATCH`, update `CHANGELOG.md`
+3. Commit + push ke `main`
+4. Buat dan push tag baru
+5. D2P dari tag baru
 
-Contoh:
-- `v1.0.1` -> `v1.0.2`
+Contoh: `v1.0.1` → `v1.0.2`
 
 ## Checklist Release Singkat
 
-Sebelum release:
-- `VERSION` sudah benar
-- `CHANGELOG.md` sudah diperbarui
-- test utama lulus
-- migration sudah direview
+Sebelum D2P:
+- [ ] `VERSION` sudah benar
+- [ ] `CHANGELOG.md` sudah diperbarui (Unreleased dipindah ke versi baru)
+- [ ] Commit release sudah di-push ke `main`
+- [ ] Annotated tag `vX.Y.Z` sudah dibuat dan di-push
 
-Setelah release:
-- tag `vX.Y.Z` sudah dibuat dan dipush
-- changelog sesuai release yang live
+Setelah D2P:
+- [ ] Smoke test API lulus
+- [ ] Tidak ada error di `storage/logs/laravel.log`
