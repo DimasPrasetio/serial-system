@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\DocumentationController;
 use App\Http\Controllers\Admin\LicenseManagementController;
 use App\Http\Controllers\Admin\PlanManagementController;
 use App\Http\Controllers\Admin\SerialManagementController;
+use App\Http\Controllers\PublicController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -24,7 +25,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', fn () => redirect()->route('admin.login'));
+Route::get('/', [PublicController::class, 'companyProfile'])->name('public.home');
+Route::get('/company-profile', [PublicController::class, 'companyProfile'])->name('public.company-profile');
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware('guest:admin')->group(function () {
