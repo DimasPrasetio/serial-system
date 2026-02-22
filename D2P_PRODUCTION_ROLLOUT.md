@@ -28,6 +28,68 @@ Gunakan **2 tahap**:
 1. **Deploy code lebih dulu** (aman untuk existing data)
 2. **Jalankan audit + migration hardening** saat jam sepi
 
+## Workflow Next Release (Panduan Rutin)
+
+Gunakan panduan ini untuk setiap release berikutnya setelah setup awal selesai.
+
+### Langkah 1 — Di Local (sebelum D2P)
+
+```bash
+# Edit code (PHP, Blade, JS, CSS) sesuai kebutuhan
+
+# Jika ada perubahan frontend:
+npm run build
+
+# Stage semua perubahan
+git add .
+git commit -m "feat/fix: deskripsi perubahan"
+
+# Update VERSION dan CHANGELOG.md (pindahkan Unreleased ke versi baru)
+git add VERSION CHANGELOG.md
+git commit -m "chore(release): prepare vX.Y.Z"
+git push origin main
+
+# Buat dan push tag (WAJIB sebelum D2P)
+git tag -a vX.Y.Z -m "Release vX.Y.Z"
+git push origin vX.Y.Z
+```
+
+### Langkah 2 — Di Server (D2P)
+
+```bash
+cd ~/domains/elcodelabs.my.id/production
+git fetch --tags
+git restore .
+git checkout vX.Y.Z
+```
+
+**Jika ada perubahan PHP dependencies (`composer.json` / `composer.lock`):**
+```bash
+composer install --no-dev --optimize-autoloader
+```
+
+**Jika ada migration baru (audit dulu, baru migrate):**
+```bash
+php artisan licenses:audit-integrity --fail-on-issues
+php artisan migrate --force
+```
+
+**Selalu jalankan setelah checkout:**
+```bash
+php artisan optimize:clear
+php artisan config:cache
+php artisan view:cache
+```
+
+### Catatan Penting
+
+- `public/build` sudah di-git — `git checkout` otomatis update FE assets tanpa langkah tambahan
+- `public_html/build` adalah symlink ke `production/public/build` — tidak perlu disentuh
+- `git restore .` diperlukan untuk reset permission changes dari runtime Laravel
+- Jangan gunakan `git pull` — selalu gunakan `git fetch --tags` + `git checkout vX.Y.Z`
+
+---
+
 ## Pre-D2P Checklist (Hostinger Shared)
 
 - Pastikan backup database terbaru tersedia.
