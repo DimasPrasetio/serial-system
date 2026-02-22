@@ -81,10 +81,24 @@ Deploy dilakukan **dari tag yang sudah dibuat**, bukan dari branch `main`.
 
 **Jika menggunakan Git via SSH di server:**
 
+Untuk **release pertama** (clone baru):
 ```bash
-git fetch --tags
+git clone https://github.com/DimasPrasetio/serial-system.git production
+cd production
 git checkout v1.0.1
 ```
+
+Untuk **release berikutnya** (update di folder production yang sudah ada):
+```bash
+cd ~/domains/elcodelabs.my.id/production
+git fetch --tags
+git restore .
+git checkout v1.0.2
+```
+
+Catatan:
+- `git restore .` diperlukan untuk reset perubahan permission file runtime (storage, bootstrap/cache) yang terjadi saat Laravel berjalan. Ini normal dan aman.
+- Jangan gunakan `git pull` — kita dalam detached HEAD di tag, bukan di branch.
 
 **Jika menggunakan upload manual (ZIP / FTP / SFTP):**
 

@@ -6,6 +6,15 @@ Format mengikuti prinsip [Keep a Changelog](https://keepachangelog.com/en/1.1.0/
 
 ## [Unreleased]
 
+## [1.0.2] - 2026-02-23
+
+### Added
+- `public/build` (Vite compiled assets) dilacak di git untuk mendukung atomic tag-based deployment di shared hosting.
+
+### Changed
+- `.gitignore`: hapus `/public/build` agar build assets ikut ter-commit.
+- `D2P_PRODUCTION_ROLLOUT.md`: dokumentasi alur git-based deploy — clone untuk release pertama, `git fetch --tags && git restore . && git checkout vX.Y.Z` untuk release berikutnya.
+
 ## [1.0.1] - 2026-02-23
 
 ### Added
