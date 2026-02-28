@@ -8,4 +8,15 @@ export default defineConfig({
             refresh: true,
         }),
     ],
+    build: {
+        cssMinify: true,
+        minify: 'esbuild',
+        target: 'es2020',
+        rollupOptions: {
+            output: {
+                manualChunks: undefined,
+            },
+        },
+        chunkSizeWarningLimit: 500,
+    },
 });

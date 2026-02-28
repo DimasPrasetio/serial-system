@@ -26,7 +26,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [PublicController::class, 'companyProfile'])->name('public.home');
-Route::get('/company-profile', [PublicController::class, 'companyProfile'])->name('public.company-profile');
+Route::redirect('/company-profile', '/');
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware('guest:admin')->group(function () {
