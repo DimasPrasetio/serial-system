@@ -20,7 +20,7 @@
 
     @php
         $splineScenePath = 'assets/spline/company-profile-hero.splinecode';
-        $splineViewerPath = 'vendor/spline/spline-viewer-1.12.58.js';
+        $splineViewerPath = 'assets/spline/spline-viewer-1.12.58.js';
         $splineSceneUrl = asset($splineScenePath) . '?v=' . filemtime(public_path($splineScenePath));
         $splineViewerUrl = asset($splineViewerPath) . '?v=' . filemtime(public_path($splineViewerPath));
     @endphp
@@ -80,7 +80,7 @@
                 <!-- Ensure container completely overlaps the left side and extends infinitely right, completely discarding layout bounding -->
                 <div
                     class="absolute inset-0 lg:left-auto lg:inset-y-0 lg:right-[-50%] lg:w-[200%] w-full h-full flex items-center justify-center
-                                                                                translate-x-[8%] sm:translate-x-0 scale-100 sm:scale-[1.15] lg:scale-[1.25] lg:translate-x-[10vw] xl:translate-x-[12vw]">
+                                                                                    translate-x-[8%] sm:translate-x-0 scale-100 sm:scale-[1.15] lg:scale-[1.25] lg:translate-x-[10vw] xl:translate-x-[12vw]">
                     <spline-viewer class="block w-full h-full overflow-visible" style="touch-action: pan-y;"
                         data-url="{{ $splineSceneUrl }}"></spline-viewer>
                 </div>
