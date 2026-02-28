@@ -19,8 +19,8 @@
     </div>
 
     @php
-        $splineScenePath = 'assets/spline/company-profile-hero.splinecode';
-        $splineViewerPath = 'assets/spline/spline-viewer-1.12.58.js';
+        $splineScenePath = 'build/assets/spline/company-profile-hero.splinecode';
+        $splineViewerPath = 'build/assets/spline/spline-viewer-1.12.58.js';
         $splineSceneUrl = asset($splineScenePath) . '?v=' . filemtime(public_path($splineScenePath));
         $splineViewerUrl = asset($splineViewerPath) . '?v=' . filemtime(public_path($splineViewerPath));
     @endphp

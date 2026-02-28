@@ -83,6 +83,9 @@ php artisan view:cache
 
 ### Catatan Penting
 
+- `public/build` pada release ini juga mencakup static runtime assets seperti `public/build/assets/spline/*`
+- Asset runtime landing page tersebut ikut dihasilkan saat `npm run build`
+
 - `public/build` sudah di-git — `git checkout` otomatis update FE assets tanpa langkah tambahan
 - `public_html/build` adalah symlink ke `production/public/build` — tidak perlu disentuh
 - `git restore .` diperlukan untuk reset permission changes dari runtime Laravel
@@ -136,6 +139,7 @@ npm run build
 Catatan:
 - Shared hosting sering tidak ideal untuk build asset (`npm ci`, `npm run build`) di server.
 - Upload hasil build (`public/build`) bersama source code release.
+- Pastikan `public/build/assets/spline/*` ikut terbawa karena dipakai langsung oleh hero 3D landing page.
 
 ### 2. Upload / deploy release ke Hostinger (dari tag)
 
@@ -168,6 +172,7 @@ Pastikan file yang di-upload adalah hasil build dari commit yang sudah di-tag:
 - perubahan source code (sesuai tag `vX.Y.Z`)
 - file migration baru
 - file `public/build/*` hasil build lokal
+- file `public/build/assets/spline/*` sebagai bagian dari artifact frontend
 - file `VERSION` dan `CHANGELOG.md`
 
 ### 3. Jalankan preflight audit integritas data (WAJIB)
@@ -216,6 +221,10 @@ Maka **tidak perlu** `queue:restart` atau Supervisor worker.
 - Buka `/`
 - Pastikan landing page render normal
 - Cek navbar/logo/favicons tampil benar
+- Cek hero 3D tampil normal di desktop
+- Cek URL asset ini tidak 404:
+- `/build/assets/spline/company-profile-hero.splinecode`
+- `/build/assets/spline/spline-viewer-1.12.58.js`
 
 ### API
 

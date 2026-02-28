@@ -6,6 +6,15 @@ Format mengikuti prinsip [Keep a Changelog](https://keepachangelog.com/en/1.1.0/
 
 ## [Unreleased]
 
+## [1.0.5] - 2026-03-01
+
+### Fixed
+- Asset 3D Spline untuk landing page sekarang di-load dari `public/build/assets/spline/*` agar ikut alur deploy shared-hosting yang memang sudah mem-publish `public/build`.
+
+### Changed
+- `npm run build` sekarang juga menyalin static runtime assets Spline ke `public/build/assets/spline`.
+- Panduan D2P dan shared-hosting diperjelas agar smoke test memverifikasi asset 3D hero tidak 404.
+
 ## [1.0.2] - 2026-02-23
 
 ### Added

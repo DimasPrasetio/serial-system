@@ -39,6 +39,7 @@ Tambahkan cron:
 ## 6) Public entrypoint
 - Pastikan docroot mengarah ke folder `public/`.
 - Pastikan `storage/` dan `bootstrap/cache/` writable.
+- Jika memakai struktur `public_html`, jangan hanya mem-publish subset asset. Semua asset runtime yang direferensikan aplikasi harus tersedia dari web root.
 
 ## 7) Default admin seeder
 - Email: `admin@example.com`
