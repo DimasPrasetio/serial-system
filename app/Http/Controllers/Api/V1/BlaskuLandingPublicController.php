@@ -112,6 +112,19 @@ class BlaskuLandingPublicController extends Controller
                 'whatsapp_display' => $contact->whatsapp_display,
                 'whatsapp_cta_text' => $contact->whatsapp_cta_text,
                 'whatsapp_message_template' => $contact->whatsapp_message_template,
+                'whatsapp_order_message_template' => $contact->whatsapp_order_message_template ?: $contact->whatsapp_message_template,
+                'order' => [
+                    'method' => 'whatsapp_direct',
+                    'destination_number' => $contact->whatsapp_number,
+                    'cta_text' => $contact->whatsapp_cta_text,
+                    'message_template' => $contact->whatsapp_order_message_template ?: $contact->whatsapp_message_template,
+                    'template_placeholders' => [
+                        '{plan_name}',
+                        '{plan_price}',
+                        '{plan_period}',
+                        '{whatsapp_display}',
+                    ],
+                ],
                 'email' => $contact->email,
                 'social_media' => [
                     'instagram' => $contact->instagram_url,

@@ -16,6 +16,7 @@ class LandingContactSetting extends Model
         'whatsapp_display',
         'whatsapp_cta_text',
         'whatsapp_message_template',
+        'whatsapp_order_message_template',
         'email',
         'instagram_url',
         'youtube_url',

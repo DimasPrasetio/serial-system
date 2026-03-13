@@ -168,6 +168,7 @@ class BlaskuLandingApiTest extends TestCase
             'whatsapp_display' => '+62 851-7347-1146',
             'whatsapp_cta_text' => 'Tanya & Order',
             'whatsapp_message_template' => 'Halo, saya ingin bertanya tentang BLASKU.',
+            'whatsapp_order_message_template' => 'Halo, saya ingin Tanya & Order BLASKU paket {plan_name} dengan harga {plan_price}.',
             'email' => 'support@blasku.id',
             'instagram_url' => 'https://instagram.com/blasku.id',
             'youtube_url' => null,
@@ -179,6 +180,11 @@ class BlaskuLandingApiTest extends TestCase
             ->assertJsonPath('success', true)
             ->assertJsonPath('data.whatsapp_number', '6285173471146')
             ->assertJsonPath('data.whatsapp_cta_text', 'Tanya & Order')
+            ->assertJsonPath('data.whatsapp_order_message_template', 'Halo, saya ingin Tanya & Order BLASKU paket {plan_name} dengan harga {plan_price}.')
+            ->assertJsonPath('data.order.method', 'whatsapp_direct')
+            ->assertJsonPath('data.order.destination_number', '6285173471146')
+            ->assertJsonPath('data.order.message_template', 'Halo, saya ingin Tanya & Order BLASKU paket {plan_name} dengan harga {plan_price}.')
+            ->assertJsonPath('data.order.template_placeholders.0', '{plan_name}')
             ->assertJsonPath('data.social_media.instagram', 'https://instagram.com/blasku.id');
     }
 

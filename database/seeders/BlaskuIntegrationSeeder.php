@@ -160,6 +160,7 @@ class BlaskuIntegrationSeeder extends Seeder
                 'whatsapp_display' => '+62 851-7347-1146',
                 'whatsapp_cta_text' => 'Tanya & Order',
                 'whatsapp_message_template' => 'Halo, saya ingin bertanya tentang BLASKU.',
+                'whatsapp_order_message_template' => 'Halo, saya ingin Tanya & Order BLASKU paket {plan_name} dengan harga {plan_price} / {plan_period}. Mohon info langkah pembayaran dan aktivasinya.',
                 'email' => 'support@blasku.id',
                 'instagram_url' => 'https://instagram.com/blasku.id',
                 'youtube_url' => null,

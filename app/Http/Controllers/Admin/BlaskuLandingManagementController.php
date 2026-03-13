@@ -12,7 +12,6 @@ use App\Services\AuditLogService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
@@ -25,37 +24,29 @@ class BlaskuLandingManagementController extends Controller
     {
     }
 
-    public function index(): View
+    public function overview(): View
     {
-        $application = $this->resolveBlaskuApplication();
+        return view('admin.blasku-landing.index', $this->buildLandingContext());
+    }
 
-        return view('admin.blasku-landing.index', [
-            'application' => $application,
-            'pricingPlans' => $application->landingPricingPlans()->orderBy('sort_order')->orderBy('id')->get(),
-            'installer' => $application->landingInstaller()->firstOrNew([
-                'application_id' => $application->id,
-            ], [
-                'platform' => 'windows',
-                'is_available' => true,
-            ]),
-            'trialSetting' => $application->landingTrialSetting()->firstOrNew([
-                'application_id' => $application->id,
-            ], [
-                'duration_days' => 7,
-                'features_included' => 'full',
-                'cta_text' => 'Download Gratis',
-                'cta_subtext' => 'Trial {duration_days} hari penuh fitur inti',
-                'is_active' => true,
-            ]),
-            'contactSetting' => $application->landingContactSetting()->firstOrNew([
-                'application_id' => $application->id,
-            ], [
-                'whatsapp_number' => '6285173471146',
-                'whatsapp_display' => '+62 851-7347-1146',
-                'whatsapp_cta_text' => 'Tanya & Order',
-                'whatsapp_message_template' => 'Halo, saya ingin bertanya tentang BLASKU.',
-            ]),
-        ]);
+    public function pricing(): View
+    {
+        return view('admin.blasku-landing.pricing', $this->buildLandingContext());
+    }
+
+    public function installer(): View
+    {
+        return view('admin.blasku-landing.installer', $this->buildLandingContext());
+    }
+
+    public function trial(): View
+    {
+        return view('admin.blasku-landing.trial', $this->buildLandingContext());
+    }
+
+    public function contact(): View
+    {
+        return view('admin.blasku-landing.contact', $this->buildLandingContext());
     }
 
     public function storePricingPlan(Request $request): RedirectResponse
@@ -109,7 +100,9 @@ class BlaskuLandingManagementController extends Controller
             ['slug' => $plan->slug]
         );
 
-        return back()->with('status', 'Paket pricing landing berhasil ditambahkan.');
+        return redirect()
+            ->route('admin.blasku-landing.pricing.index')
+            ->with('status', 'Paket pricing landing berhasil ditambahkan.');
     }
 
     public function updatePricingPlan(Request $request, LandingPricingPlan $pricingPlan): RedirectResponse
@@ -163,7 +156,9 @@ class BlaskuLandingManagementController extends Controller
             ['slug' => $pricingPlan->slug]
         );
 
-        return back()->with('status', 'Paket pricing landing berhasil diperbarui.');
+        return redirect()
+            ->route('admin.blasku-landing.pricing.index')
+            ->with('status', 'Paket pricing landing berhasil diperbarui.');
     }
 
     public function deletePricingPlan(LandingPricingPlan $pricingPlan): RedirectResponse
@@ -182,7 +177,9 @@ class BlaskuLandingManagementController extends Controller
             ['slug' => $slug]
         );
 
-        return back()->with('status', 'Paket pricing landing berhasil dihapus.');
+        return redirect()
+            ->route('admin.blasku-landing.pricing.index')
+            ->with('status', 'Paket pricing landing berhasil dihapus.');
     }
 
     public function updateInstaller(Request $request): RedirectResponse
@@ -220,7 +217,9 @@ class BlaskuLandingManagementController extends Controller
             ['version' => $installer->version]
         );
 
-        return back()->with('status', 'Konfigurasi installer landing berhasil diperbarui.');
+        return redirect()
+            ->route('admin.blasku-landing.installer.index')
+            ->with('status', 'Konfigurasi installer landing berhasil diperbarui.');
     }
 
     public function updateTrial(Request $request): RedirectResponse
@@ -254,7 +253,9 @@ class BlaskuLandingManagementController extends Controller
             ['duration_days' => $trial->duration_days]
         );
 
-        return back()->with('status', 'Konfigurasi trial landing berhasil diperbarui.');
+        return redirect()
+            ->route('admin.blasku-landing.trial.index')
+            ->with('status', 'Konfigurasi trial landing berhasil diperbarui.');
     }
 
     public function updateContact(Request $request): RedirectResponse
@@ -266,6 +267,7 @@ class BlaskuLandingManagementController extends Controller
             'whatsapp_display' => ['required', 'string', 'max:50'],
             'whatsapp_cta_text' => ['required', 'string', 'max:100'],
             'whatsapp_message_template' => ['required', 'string', 'max:1000'],
+            'whatsapp_order_message_template' => ['required', 'string', 'max:1000'],
             'email' => ['nullable', 'email', 'max:255'],
             'instagram_url' => ['nullable', 'url', 'max:255'],
             'youtube_url' => ['nullable', 'url', 'max:255'],
@@ -279,6 +281,7 @@ class BlaskuLandingManagementController extends Controller
                 'whatsapp_display' => $data['whatsapp_display'],
                 'whatsapp_cta_text' => $data['whatsapp_cta_text'],
                 'whatsapp_message_template' => $data['whatsapp_message_template'],
+                'whatsapp_order_message_template' => $data['whatsapp_order_message_template'],
                 'email' => $this->nullableString($data['email'] ?? null),
                 'instagram_url' => $this->nullableString($data['instagram_url'] ?? null),
                 'youtube_url' => $this->nullableString($data['youtube_url'] ?? null),
@@ -294,7 +297,9 @@ class BlaskuLandingManagementController extends Controller
             ['whatsapp_number' => $contact->whatsapp_number]
         );
 
-        return back()->with('status', 'Kontak landing berhasil diperbarui.');
+        return redirect()
+            ->route('admin.blasku-landing.contact.index')
+            ->with('status', 'Kontak landing berhasil diperbarui.');
     }
 
     private function resolveBlaskuApplication(): Application
@@ -303,6 +308,58 @@ class BlaskuLandingManagementController extends Controller
             ['code' => self::APPLICATION_CODE],
             ['name' => 'BLASKU Desktop App', 'is_active' => true]
         );
+    }
+
+    private function buildLandingContext(): array
+    {
+        $application = $this->resolveBlaskuApplication();
+
+        return [
+            'application' => $application,
+            'pricingPlans' => $application->landingPricingPlans()->orderBy('sort_order')->orderBy('id')->get(),
+            'installer' => $application->landingInstaller()->firstOrNew([
+                'application_id' => $application->id,
+            ], [
+                'platform' => 'windows',
+                'is_available' => true,
+            ]),
+            'trialSetting' => $application->landingTrialSetting()->firstOrNew([
+                'application_id' => $application->id,
+            ], [
+                'duration_days' => 7,
+                'features_included' => 'full',
+                'cta_text' => 'Download Gratis',
+                'cta_subtext' => 'Trial {duration_days} hari penuh fitur inti',
+                'is_active' => true,
+            ]),
+            'contactSetting' => $application->landingContactSetting()->firstOrNew([
+                'application_id' => $application->id,
+            ], [
+                'whatsapp_number' => '6285173471146',
+                'whatsapp_display' => '+62 851-7347-1146',
+                'whatsapp_cta_text' => 'Tanya & Order',
+                'whatsapp_message_template' => 'Halo, saya ingin bertanya tentang BLASKU.',
+                'whatsapp_order_message_template' => 'Halo, saya ingin Tanya & Order BLASKU paket {plan_name} dengan harga {plan_price} / {plan_period}. Mohon info langkah pembayaran dan aktivasinya.',
+            ]),
+            'publicApiEndpoints' => [
+                [
+                    'label' => 'Pricing Plans',
+                    'path' => '/api/v1/public/pricing-plans',
+                ],
+                [
+                    'label' => 'Installer',
+                    'path' => '/api/v1/public/installer',
+                ],
+                [
+                    'label' => 'Trial',
+                    'path' => '/api/v1/public/trial',
+                ],
+                [
+                    'label' => 'Contact',
+                    'path' => '/api/v1/public/contact',
+                ],
+            ],
+        ];
     }
 
     private function parseFeatures(string $featuresText): array

@@ -93,9 +93,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
             ->middleware('can:manage-plans')
             ->name('plans.update');
 
-        Route::get('/blasku/landing', [BlaskuLandingManagementController::class, 'index'])
+        Route::get('/blasku/landing', [BlaskuLandingManagementController::class, 'overview'])
             ->middleware('can:manage-blasku-landing')
-            ->name('blasku-landing.index');
+            ->name('blasku-landing.overview');
+        Route::get('/blasku/landing/pricing', [BlaskuLandingManagementController::class, 'pricing'])
+            ->middleware('can:manage-blasku-landing')
+            ->name('blasku-landing.pricing.index');
         Route::post('/blasku/landing/pricing-plans', [BlaskuLandingManagementController::class, 'storePricingPlan'])
             ->middleware('can:manage-blasku-landing')
             ->name('blasku-landing.pricing-plans.store');
@@ -105,12 +108,21 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::delete('/blasku/landing/pricing-plans/{pricingPlan}', [BlaskuLandingManagementController::class, 'deletePricingPlan'])
             ->middleware('can:manage-blasku-landing')
             ->name('blasku-landing.pricing-plans.delete');
+        Route::get('/blasku/landing/installer', [BlaskuLandingManagementController::class, 'installer'])
+            ->middleware('can:manage-blasku-landing')
+            ->name('blasku-landing.installer.index');
         Route::put('/blasku/landing/installer', [BlaskuLandingManagementController::class, 'updateInstaller'])
             ->middleware('can:manage-blasku-landing')
             ->name('blasku-landing.installer.update');
+        Route::get('/blasku/landing/trial', [BlaskuLandingManagementController::class, 'trial'])
+            ->middleware('can:manage-blasku-landing')
+            ->name('blasku-landing.trial.index');
         Route::put('/blasku/landing/trial', [BlaskuLandingManagementController::class, 'updateTrial'])
             ->middleware('can:manage-blasku-landing')
             ->name('blasku-landing.trial.update');
+        Route::get('/blasku/landing/contact', [BlaskuLandingManagementController::class, 'contact'])
+            ->middleware('can:manage-blasku-landing')
+            ->name('blasku-landing.contact.index');
         Route::put('/blasku/landing/contact', [BlaskuLandingManagementController::class, 'updateContact'])
             ->middleware('can:manage-blasku-landing')
             ->name('blasku-landing.contact.update');

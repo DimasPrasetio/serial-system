@@ -79,13 +79,33 @@
             @endcan
 
             @can('manage-blasku-landing')
-                <a class="sidebar-link {{ request()->routeIs('admin.blasku-landing.*') ? 'sidebar-link-active' : '' }}" href="{{ route('admin.blasku-landing.index') }}">
-                    <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                        <path d="M4.5 7A2.5 2.5 0 017 4.5h10A2.5 2.5 0 0119.5 7v10A2.5 2.5 0 0117 19.5H7A2.5 2.5 0 014.5 17V7z" stroke="currentColor" stroke-width="1.8"/>
-                        <path d="M8 9h8M8 12h5M8 15h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-                    </svg>
-                    <span>Landing BLASKU</span>
-                </a>
+                <div class="sidebar-group {{ request()->routeIs('admin.blasku-landing.*') ? 'sidebar-group-active' : '' }}">
+                    <a class="sidebar-link {{ request()->routeIs('admin.blasku-landing.*') ? 'sidebar-link-active' : '' }}" href="{{ route('admin.blasku-landing.overview') }}">
+                        <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <path d="M4.5 7A2.5 2.5 0 017 4.5h10A2.5 2.5 0 0119.5 7v10A2.5 2.5 0 0117 19.5H7A2.5 2.5 0 014.5 17V7z" stroke="currentColor" stroke-width="1.8"/>
+                            <path d="M8 9h8M8 12h5M8 15h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                        </svg>
+                        <span>Landing BLASKU</span>
+                    </a>
+
+                    <div class="sidebar-submenu">
+                        <a class="sidebar-sublink {{ request()->routeIs('admin.blasku-landing.overview') ? 'sidebar-sublink-active' : '' }}" href="{{ route('admin.blasku-landing.overview') }}">
+                            Ringkasan
+                        </a>
+                        <a class="sidebar-sublink {{ request()->routeIs('admin.blasku-landing.pricing.*') || request()->routeIs('admin.blasku-landing.pricing-plans.*') ? 'sidebar-sublink-active' : '' }}" href="{{ route('admin.blasku-landing.pricing.index') }}">
+                            Pricing
+                        </a>
+                        <a class="sidebar-sublink {{ request()->routeIs('admin.blasku-landing.installer.*') ? 'sidebar-sublink-active' : '' }}" href="{{ route('admin.blasku-landing.installer.index') }}">
+                            Installer
+                        </a>
+                        <a class="sidebar-sublink {{ request()->routeIs('admin.blasku-landing.trial.*') ? 'sidebar-sublink-active' : '' }}" href="{{ route('admin.blasku-landing.trial.index') }}">
+                            Trial
+                        </a>
+                        <a class="sidebar-sublink {{ request()->routeIs('admin.blasku-landing.contact.*') ? 'sidebar-sublink-active' : '' }}" href="{{ route('admin.blasku-landing.contact.index') }}">
+                            Contact
+                        </a>
+                    </div>
+                </div>
             @endcan
 
             @can('manage-serials')

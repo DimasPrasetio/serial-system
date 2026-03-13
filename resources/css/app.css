@@ -207,6 +207,38 @@
     color: rgb(255 255 255 / 1);
   }
 
+  .sidebar-group {
+    @apply rounded-2xl border border-transparent p-1;
+  }
+
+  .sidebar-group-active {
+    @apply border-brand-500/15 bg-brand-500/5;
+  }
+
+  html.light .sidebar-group-active {
+    @apply border-brand-100 bg-brand-50/50;
+  }
+
+  .sidebar-submenu {
+    @apply mt-1 space-y-1 pl-4;
+  }
+
+  .sidebar-sublink {
+    @apply block rounded-xl px-3 py-2 text-sm text-slate-400 transition hover:bg-brand-500/10 hover:text-brand-300;
+  }
+
+  html.light .sidebar-sublink {
+    @apply text-slate-500 hover:bg-brand-50 hover:text-brand-700;
+  }
+
+  .sidebar-sublink-active {
+    @apply bg-slate-800/80 text-slate-100;
+  }
+
+  html.light .sidebar-sublink-active {
+    @apply bg-white text-brand-700 shadow-sm;
+  }
+
   .table-shell {
     @apply overflow-x-auto;
   }
@@ -417,6 +449,22 @@
 
   html.light .docs-item-accent {
     @apply border-brand-200 bg-brand-50;
+  }
+
+  .subnav-link {
+    @apply inline-flex items-center justify-center rounded-xl border border-slate-700 bg-slate-900/70 px-4 py-2 text-sm font-semibold text-slate-300 transition hover:border-brand-500/30 hover:bg-brand-500/10 hover:text-brand-300;
+  }
+
+  html.light .subnav-link {
+    @apply border-slate-200 bg-white text-slate-600 hover:border-brand-200 hover:bg-brand-50 hover:text-brand-700;
+  }
+
+  .subnav-link-active {
+    @apply border-brand-500/35 bg-brand-500/15 text-brand-200;
+  }
+
+  html.light .subnav-link-active {
+    @apply border-brand-200 bg-brand-50 text-brand-700;
   }
 }
 
