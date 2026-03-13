@@ -6,6 +6,23 @@ Format mengikuti prinsip [Keep a Changelog](https://keepachangelog.com/en/1.1.0/
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-03-13
+
+### Added
+- Public API baru untuk landing page BLASKU:
+  - `GET /api/v1/public/pricing-plans`
+  - `GET /api/v1/public/installer`
+  - `GET /api/v1/public/trial`
+  - `GET /api/v1/public/contact`
+- Modul admin baru `Landing BLASKU` untuk mengelola konten landing page langsung dari `serial-system`.
+- Schema dan model baru untuk pricing plans, installer, trial setting, dan contact setting landing BLASKU.
+- Seeder default untuk konten landing BLASKU agar admin panel dan public API langsung memiliki baseline data.
+- Feature test untuk kontrak public API landing BLASKU.
+
+### Changed
+- Permission admin ditambah dengan `manage-blasku-landing` agar pengelolaan landing BLASKU bisa dibatasi per role.
+- Application `BLASKU` sekarang juga menjadi source of truth untuk data public landing page, bukan hanya lisensi desktop app.
+
 ## [1.0.5] - 2026-03-01
 
 ### Fixed
