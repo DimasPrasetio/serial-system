@@ -120,7 +120,7 @@ class BlaskuIntegrationSeeder extends Seeder
         ];
 
         foreach ($landingPlans as $landingPlan) {
-            LandingPricingPlan::query()->updateOrCreate(
+            LandingPricingPlan::query()->firstOrCreate(
                 [
                     'application_id' => $application->id,
                     'slug' => $landingPlan['slug'],
@@ -129,7 +129,7 @@ class BlaskuIntegrationSeeder extends Seeder
             );
         }
 
-        LandingInstaller::query()->updateOrCreate(
+        LandingInstaller::query()->firstOrCreate(
             ['application_id' => $application->id],
             [
                 'version' => '1.5.2',
@@ -142,7 +142,7 @@ class BlaskuIntegrationSeeder extends Seeder
             ]
         );
 
-        LandingTrialSetting::query()->updateOrCreate(
+        LandingTrialSetting::query()->firstOrCreate(
             ['application_id' => $application->id],
             [
                 'duration_days' => 7,
@@ -153,7 +153,7 @@ class BlaskuIntegrationSeeder extends Seeder
             ]
         );
 
-        LandingContactSetting::query()->updateOrCreate(
+        LandingContactSetting::query()->firstOrCreate(
             ['application_id' => $application->id],
             [
                 'whatsapp_number' => '6285173471146',

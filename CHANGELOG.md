@@ -6,6 +6,23 @@ Format mengikuti prinsip [Keep a Changelog](https://keepachangelog.com/en/1.1.0/
 
 ## [Unreleased]
 
+## [1.1.2] - 2026-03-13
+
+### Changed
+- `BlaskuIntegrationSeeder` sekarang hanya melakukan bootstrap record landing BLASKU yang belum ada, sehingga aman dipakai untuk rollout baseline tanpa menimpa konten landing yang sudah disesuaikan admin.
+- Panduan deploy shared hosting dan D2P production diperbarui agar sesuai dengan flow production `elcodelabs.com`, cache command yang valid saat ini, dan smoke test untuk public API landing BLASKU.
+- README dan `.env.example` diselaraskan dengan identitas project `serial-system` agar setup dan deploy tidak lagi mengacu ke skeleton Laravel generik.
+
+## [1.1.1] - 2026-03-13
+
+### Added
+- Template pesan order WhatsApp terpisah untuk alur `Tanya & Order` langsung dari landing page BLASKU.
+- Submenu admin `Landing BLASKU` yang memisahkan halaman `Ringkasan`, `Pricing`, `Installer`, `Trial`, dan `Contact`.
+
+### Changed
+- Response `GET /api/v1/public/contact` sekarang menegaskan metode order `whatsapp_direct`, tujuan nomor, CTA, dan template pesan order yang bisa dikustom dari admin panel.
+- Admin panel `Landing BLASKU > Contact` sekarang mengelola template pesan WhatsApp umum dan template pesan order secara terpisah.
+
 ## [1.1.0] - 2026-03-13
 
 ### Added
