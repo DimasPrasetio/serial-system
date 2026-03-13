@@ -3,6 +3,10 @@
 namespace Database\Seeders;
 
 use App\Models\Application;
+use App\Models\LandingContactSetting;
+use App\Models\LandingInstaller;
+use App\Models\LandingPricingPlan;
+use App\Models\LandingTrialSetting;
 use App\Models\Plan;
 use App\Models\SerialNumber;
 use App\Support\SecretHasher;
@@ -57,6 +61,111 @@ class BlaskuIntegrationSeeder extends Seeder
                 ]
             );
         }
+
+        $landingPlans = [
+            [
+                'name' => 'Bulanan',
+                'slug' => 'bulanan',
+                'original_price' => 199000,
+                'price' => 99000,
+                'period' => 'bulan',
+                'period_months' => 1,
+                'badge' => null,
+                'is_highlighted' => false,
+                'features' => [
+                    'Semua fitur inti',
+                    'Lead scraping lokal',
+                    'Database & segmentasi',
+                    'Campaign adaptive',
+                ],
+                'cta_text' => 'Tanya & Order',
+                'sort_order' => 1,
+            ],
+            [
+                'name' => '3 Bulan',
+                'slug' => '3-bulan',
+                'original_price' => 597000,
+                'price' => 279000,
+                'period' => '3 bulan',
+                'period_months' => 3,
+                'badge' => 'Paling Efisien',
+                'is_highlighted' => true,
+                'features' => [
+                    'Semua fitur inti',
+                    'Lead scraping lokal',
+                    'Database & segmentasi',
+                    'Campaign adaptive',
+                ],
+                'cta_text' => 'Tanya & Order',
+                'sort_order' => 2,
+            ],
+            [
+                'name' => 'Tahunan',
+                'slug' => 'tahunan',
+                'original_price' => 2388000,
+                'price' => 999000,
+                'period' => 'tahun',
+                'period_months' => 12,
+                'badge' => null,
+                'is_highlighted' => false,
+                'features' => [
+                    'Semua fitur inti',
+                    'Lead scraping lokal',
+                    'Database & segmentasi',
+                    'Campaign adaptive',
+                ],
+                'cta_text' => 'Tanya & Order',
+                'sort_order' => 3,
+            ],
+        ];
+
+        foreach ($landingPlans as $landingPlan) {
+            LandingPricingPlan::query()->updateOrCreate(
+                [
+                    'application_id' => $application->id,
+                    'slug' => $landingPlan['slug'],
+                ],
+                $landingPlan + ['is_active' => true]
+            );
+        }
+
+        LandingInstaller::query()->updateOrCreate(
+            ['application_id' => $application->id],
+            [
+                'version' => '1.5.2',
+                'download_url' => 'https://drive.usercontent.google.com/download?id=17uOtn9iQK9QHiYcP_2Eh1SPdfgr7Hhae&export=download&authuser=0',
+                'platform' => 'windows',
+                'file_size_mb' => 85.4,
+                'release_notes' => 'Perbaikan stabilitas campaign adaptive dan peningkatan kecepatan scraper.',
+                'is_available' => true,
+                'released_at' => now()->copy()->startOfDay(),
+            ]
+        );
+
+        LandingTrialSetting::query()->updateOrCreate(
+            ['application_id' => $application->id],
+            [
+                'duration_days' => 7,
+                'features_included' => 'full',
+                'cta_text' => 'Download Gratis',
+                'cta_subtext' => 'Trial {duration_days} hari penuh fitur inti',
+                'is_active' => true,
+            ]
+        );
+
+        LandingContactSetting::query()->updateOrCreate(
+            ['application_id' => $application->id],
+            [
+                'whatsapp_number' => '6285173471146',
+                'whatsapp_display' => '+62 851-7347-1146',
+                'whatsapp_cta_text' => 'Tanya & Order',
+                'whatsapp_message_template' => 'Halo, saya ingin bertanya tentang BLASKU.',
+                'email' => 'support@blasku.id',
+                'instagram_url' => 'https://instagram.com/blasku.id',
+                'youtube_url' => null,
+                'tiktok_url' => null,
+            ]
+        );
 
         $this->cleanupSeededSampleSerials($application);
 

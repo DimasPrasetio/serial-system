@@ -78,6 +78,16 @@
                 </a>
             @endcan
 
+            @can('manage-blasku-landing')
+                <a class="sidebar-link {{ request()->routeIs('admin.blasku-landing.*') ? 'sidebar-link-active' : '' }}" href="{{ route('admin.blasku-landing.index') }}">
+                    <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M4.5 7A2.5 2.5 0 017 4.5h10A2.5 2.5 0 0119.5 7v10A2.5 2.5 0 0117 19.5H7A2.5 2.5 0 014.5 17V7z" stroke="currentColor" stroke-width="1.8"/>
+                        <path d="M8 9h8M8 12h5M8 15h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                    </svg>
+                    <span>Landing BLASKU</span>
+                </a>
+            @endcan
+
             @can('manage-serials')
                 <a class="sidebar-link {{ request()->routeIs('admin.serials.*') ? 'sidebar-link-active' : '' }}" href="{{ route('admin.serials.index') }}">
                     <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden="true">
