@@ -6,6 +6,15 @@ Format mengikuti prinsip [Keep a Changelog](https://keepachangelog.com/en/1.1.0/
 
 ## [Unreleased]
 
+## [1.1.3] - 2026-03-13
+
+### Added
+- Helper release baru `npm run release:prepare` untuk menjalankan build dan memverifikasi artifact `public/build` sebelum tag release dibuat.
+
+### Changed
+- Panduan release sekarang mewajibkan proses build asset sebelum commit release dan pembuatan tag.
+- Panduan deploy shared hosting dan D2P diselaraskan dengan struktur server `serial-system` dan penggunaan symlink `public_html -> serial-system/public`.
+
 ## [1.1.2] - 2026-03-13
 
 ### Changed

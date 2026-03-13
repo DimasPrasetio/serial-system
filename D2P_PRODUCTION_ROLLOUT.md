@@ -31,7 +31,7 @@ Release terkini membawa:
 ## Workflow Release Lokal
 
 ```bash
-npm run build
+npm run release:prepare
 git add .
 git commit -m "feat/fix: deskripsi perubahan"
 git add VERSION CHANGELOG.md
@@ -46,7 +46,7 @@ git push origin vX.Y.Z
 Gunakan path production yang aktif di domain `.com`. Contoh:
 
 ```bash
-cd ~/domains/elcodelabs.com/production
+cd ~/domains/elcodelabs.com/serial-system
 git fetch --tags
 git restore .
 git checkout vX.Y.Z
@@ -79,6 +79,27 @@ php artisan db:seed --class=BlaskuIntegrationSeeder --force
 Catatan:
 - Seeder BLASKU sekarang aman untuk bootstrap baseline landing yang belum ada dan tidak menimpa konten landing yang sudah diubah admin.
 - Hindari `php artisan db:seed --force` penuh pada production rutin jika tidak memang ingin menjalankan seluruh baseline project.
+- Karena `npm run release:prepare` wajib dijalankan sebelum tag, artifact `public/build` sudah ikut terbawa saat `git checkout vX.Y.Z`.
+
+## Web Root dan Symlink
+
+Struktur yang direkomendasikan:
+
+- project repo: `~/domains/elcodelabs.com/serial-system`
+- web root aktif: `~/domains/elcodelabs.com/public_html`
+
+Symlink yang direkomendasikan:
+
+```bash
+ln -s /home/USER/domains/elcodelabs.com/serial-system/public /home/USER/domains/elcodelabs.com/public_html
+```
+
+Verifikasi:
+
+```bash
+readlink -f ~/domains/elcodelabs.com/public_html
+ls -lah ~/domains/elcodelabs.com/public_html/build/assets
+```
 
 ## Optimasi Cache Production
 
@@ -96,7 +117,7 @@ Project ini membutuhkan scheduler untuk sinkronisasi status lisensi dan cleanup 
 Cron Hostinger yang direkomendasikan:
 
 ```bash
-* * * * * /usr/bin/php /home/USER/domains/elcodelabs.com/production/artisan schedule:run >> /dev/null 2>&1
+* * * * * /usr/bin/php /home/USER/domains/elcodelabs.com/serial-system/artisan schedule:run >> /dev/null 2>&1
 ```
 
 ## Smoke Test Setelah D2P
@@ -128,7 +149,7 @@ Cron Hostinger yang direkomendasikan:
 Jika perlu rollback code:
 
 ```bash
-cd ~/domains/elcodelabs.com/production
+cd ~/domains/elcodelabs.com/serial-system
 git fetch --tags
 git checkout vPREVIOUS
 php artisan optimize:clear

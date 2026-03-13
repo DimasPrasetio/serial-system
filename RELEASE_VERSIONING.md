@@ -43,15 +43,22 @@ Gunakan format: `MAJOR.MINOR.PATCH`
 ### 1. Siapkan release di local
 
 1. Tentukan jenis release (`PATCH` / `MINOR` / `MAJOR`)
-2. Update file `VERSION`
-3. Pindahkan catatan perubahan dari `[Unreleased]` ke section release baru di `CHANGELOG.md`
-4. Commit dan push ke `main`
+2. Jalankan `npm run release:prepare` terlebih dahulu
+3. Pastikan `public/build/*` ikut terbarui jika ada perubahan frontend, Blade, atau asset public
+4. Update file `VERSION`
+5. Pindahkan catatan perubahan dari `[Unreleased]` ke section release baru di `CHANGELOG.md`
+6. Commit dan push ke `main`
 
 ```bash
-git add VERSION CHANGELOG.md
+npm run release:prepare
+git add public/build package.json scripts/verify-release-build.mjs VERSION CHANGELOG.md
 git commit -m "chore(release): prepare v1.0.1"
 git push origin main
 ```
+
+Catatan:
+- `npm run release:prepare` adalah langkah wajib sebelum membuat tag release baru.
+- Jangan membuat tag jika build gagal atau `public/build` belum sesuai dengan source terbaru.
 
 ### 2. Buat dan push annotated tag
 
@@ -83,18 +90,21 @@ Jangan hapus tag yang sudah ada. Buat fix, lalu rilis versi baru:
 Jika ada bug production yang harus cepat diperbaiki:
 
 1. Buat fix di local
-2. Bump `PATCH`, update `CHANGELOG.md`
-3. Commit + push ke `main`
-4. Buat dan push tag baru
-5. D2P dari tag baru
+2. Jalankan `npm run release:prepare`
+3. Bump `PATCH`, update `CHANGELOG.md`
+4. Commit + push ke `main`
+5. Buat dan push tag baru
+6. D2P dari tag baru
 
 Contoh: `v1.0.1` → `v1.0.2`
 
 ## Checklist Release Singkat
 
 Sebelum D2P:
+- [ ] `npm run release:prepare` sudah sukses dijalankan
 - [ ] `VERSION` sudah benar
 - [ ] `CHANGELOG.md` sudah diperbarui (Unreleased dipindah ke versi baru)
+- [ ] `public/build` sudah ikut dalam commit release bila ada perubahan asset
 - [ ] Commit release sudah di-push ke `main`
 - [ ] Annotated tag `vX.Y.Z` sudah dibuat dan di-push
 

@@ -9,6 +9,7 @@ Checklist singkat ini untuk deploy `serial-system` di shared hosting dengan prod
 - Extension PHP: `pdo_mysql`, `openssl`, `mbstring`, `tokenizer`, `xml`, `ctype`, `json`, `fileinfo`
 - Docroot mengarah ke folder `public/`
 - Folder `storage/` dan `bootstrap/cache/` writable
+- Disarankan `public_html` adalah symlink ke `/home/USER/domains/elcodelabs.com/serial-system/public`
 
 ## 2) `.env` production minimum
 
@@ -66,15 +67,36 @@ php artisan route:cache
 php artisan view:cache
 ```
 
-## 6) Scheduler cron
+## 6) Symlink web root
+
+Struktur yang direkomendasikan:
+
+- repo Laravel: `/home/USER/domains/elcodelabs.com/serial-system`
+- web root domain: `/home/USER/domains/elcodelabs.com/public_html`
+- symlink:
+
+```bash
+ln -s /home/USER/domains/elcodelabs.com/serial-system/public /home/USER/domains/elcodelabs.com/public_html
+```
+
+Verifikasi:
+
+```bash
+readlink -f /home/USER/domains/elcodelabs.com/public_html
+ls -lah /home/USER/domains/elcodelabs.com/public_html/build
+```
+
+Karena `public/build` dilacak di git dan harus dibangun sebelum tag release, `git checkout vX.Y.Z` akan otomatis membawa asset build terbaru selama symlink web root menunjuk ke folder `public` project.
+
+## 7) Scheduler cron
 
 Tambahkan cron Hostinger/cPanel:
 
 ```bash
-* * * * * /usr/bin/php /home/USER/domains/elcodelabs.com/production/artisan schedule:run >> /dev/null 2>&1
+* * * * * /usr/bin/php /home/USER/domains/elcodelabs.com/serial-system/artisan schedule:run >> /dev/null 2>&1
 ```
 
-## 7) Smoke test minimum
+## 8) Smoke test minimum
 
 - `GET /v1/ping` harus `200`
 - `GET /api/v1/public/pricing-plans` harus `200`
@@ -83,7 +105,7 @@ Tambahkan cron Hostinger/cPanel:
 - Menu `Landing BLASKU` tampil
 - Halaman `Pricing`, `Installer`, `Trial`, dan `Contact` bisa dibuka
 
-## 8) Default admin
+## 9) Default admin
 
 - Email: `admin@example.com`
 - Password: `Admin12345`

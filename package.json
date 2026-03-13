@@ -3,7 +3,8 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build": "vite build && node scripts/copy-public-assets.mjs"
+        "build": "vite build && node scripts/copy-public-assets.mjs",
+        "release:prepare": "npm run build && node scripts/verify-release-build.mjs"
     },
     "devDependencies": {
         "@tailwindcss/forms": "^0.5.11",
