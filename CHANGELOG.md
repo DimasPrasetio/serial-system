@@ -6,6 +6,13 @@ Format mengikuti prinsip [Keep a Changelog](https://keepachangelog.com/en/1.1.0/
 
 ## [Unreleased]
 
+## [1.1.4] - 2026-03-14
+
+### Changed
+- Rate limiting API disesuaikan untuk pola polling agar lebih andal: endpoint read (`/v1/licenses/status` dan `/v1/licenses/devices`) sekarang memakai limiter `license-read` yang berbasis identitas token dan lebih longgar.
+- Endpoint write lisensi (`activate`, `trial`, `renew`, dan `devices/deactivate`) dipisah ke limiter `license-write` agar tetap protektif tanpa mengganggu traffic polling.
+- Baseline limiter group `api` ditingkatkan untuk mengurangi false-positive throttling pada beban request yang lebih tinggi.
+
 ## [1.1.3] - 2026-03-13
 
 ### Added

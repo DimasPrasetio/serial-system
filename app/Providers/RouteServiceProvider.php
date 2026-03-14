@@ -25,17 +25,38 @@ class RouteServiceProvider extends ServiceProvider
     public function boot(): void
     {
         RateLimiter::for('api', function (Request $request) {
-            return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
+            return Limit::perMinute(240)->by($request->user()?->id ?: $request->ip());
         });
 
-        RateLimiter::for('license-critical', function (Request $request) {
+        RateLimiter::for('license-write', function (Request $request) {
             $key = implode('|', [
                 $request->ip(),
                 (string) $request->header('X-Application-Code', 'unknown'),
                 (string) $request->path(),
             ]);
 
-            return Limit::perMinute(15)->by($key);
+            return Limit::perMinute(30)->by($key);
+        });
+
+        RateLimiter::for('license-read', function (Request $request) {
+            $authorization = (string) $request->header('Authorization', '');
+            $tokenPart = '';
+
+            if (str_starts_with($authorization, 'Bearer ')) {
+                $tokenPart = trim(substr($authorization, 7));
+            }
+
+            $identity = $tokenPart !== ''
+                ? hash('sha256', $tokenPart)
+                : $request->ip();
+
+            $key = implode('|', [
+                (string) $request->header('X-Application-Code', 'unknown'),
+                $identity,
+                (string) $request->path(),
+            ]);
+
+            return Limit::perMinute(180)->by($key);
         });
 
         RateLimiter::for('admin-login', function (Request $request) {
