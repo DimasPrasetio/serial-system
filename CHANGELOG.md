@@ -6,6 +6,11 @@ Format mengikuti prinsip [Keep a Changelog](https://keepachangelog.com/en/1.1.0/
 
 ## [Unreleased]
 
+## [1.1.5] - 2026-03-14
+
+### Fixed
+- Wiring middleware throttle pada `routes/api.php` diselaraskan dengan limiter baru (`license-read` dan `license-write`) agar endpoint lisensi tidak lagi mereferensikan limiter lama `license-critical`.
+
 ## [1.1.4] - 2026-03-14
 
 ### Changed

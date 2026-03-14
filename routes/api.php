@@ -13,16 +13,19 @@ Route::prefix('v1/licenses')
     ->middleware(['resolve.application'])
     ->group(function () {
         Route::post('/activate', [LicenseController::class, 'activate'])
-            ->middleware('throttle:license-critical');
+            ->middleware('throttle:license-write');
         Route::post('/trial', [LicenseController::class, 'trial'])
-            ->middleware('throttle:license-critical');
+            ->middleware('throttle:license-write');
 
         Route::middleware(['auth.license'])->group(function () {
-            Route::get('/status', [LicenseController::class, 'status']);
+            Route::get('/status', [LicenseController::class, 'status'])
+                ->middleware('throttle:license-read');
             Route::post('/renew', [LicenseController::class, 'renew'])
-                ->middleware('throttle:license-critical');
-            Route::post('/devices/deactivate', [LicenseController::class, 'deactivateDevice']);
-            Route::get('/devices', [LicenseController::class, 'devices']);
+                ->middleware('throttle:license-write');
+            Route::post('/devices/deactivate', [LicenseController::class, 'deactivateDevice'])
+                ->middleware('throttle:license-write');
+            Route::get('/devices', [LicenseController::class, 'devices'])
+                ->middleware('throttle:license-read');
         });
     });
 
