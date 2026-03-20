@@ -6,6 +6,19 @@ Format mengikuti prinsip [Keep a Changelog](https://keepachangelog.com/en/1.1.0/
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-03-20
+
+### Added
+- Halaman publik `GET /kebijakan-privasi` dan `GET /ketentuan-layanan` dengan konten yang diturunkan dari data sistem yang nyata (data yang dikumpulkan, aturan lisensi, kontak resmi perusahaan).
+- Footer landing page didesain ulang menjadi 3 kolom: brand + identitas hukum, navigasi (Tentang Kami, Kontak & Support), dan legal (Kebijakan Privasi, Ketentuan Layanan).
+- Nama entitas hukum **PT. Prayora Karya Pratama** ditambahkan ke data perusahaan di `PublicController` dan ditampilkan di footer serta halaman legal.
+
+### Fixed
+- Pemilihan trial plan di `TrialLicenseService` diubah dari `.first()` ke `.latest()->first()` agar selalu menggunakan trial plan yang paling baru dibuat, bukan yang paling lama.
+
+### Changed
+- Admin panel: penambahan trial plan baru dengan `is_trial=true` kini diblokir apabila sudah ada trial plan aktif untuk aplikasi yang sama. Admin harus menonaktifkan trial lama terlebih dahulu sebelum membuat yang baru.
+
 ## [1.1.5] - 2026-03-14
 
 ### Fixed
