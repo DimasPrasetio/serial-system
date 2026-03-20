@@ -31,6 +31,7 @@ class TrialLicenseService
             ->where('application_id', $application->id)
             ->where('is_trial', true)
             ->where('is_active', true)
+            ->latest()
             ->first();
 
         if (! $trialPlan) {

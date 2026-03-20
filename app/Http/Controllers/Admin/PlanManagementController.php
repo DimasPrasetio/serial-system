@@ -38,9 +38,25 @@ class PlanManagementController extends Controller
             'is_trial' => ['sometimes', 'boolean'],
         ]);
 
+        $isTrial = (bool) ($data['is_trial'] ?? false);
+
+        if ($isTrial) {
+            $hasActiveTrial = Plan::query()
+                ->where('application_id', $data['application_id'])
+                ->where('is_trial', true)
+                ->where('is_active', true)
+                ->exists();
+
+            if ($hasActiveTrial) {
+                return back()
+                    ->withInput()
+                    ->withErrors(['is_trial' => 'Sudah ada trial aktif untuk aplikasi ini. Nonaktifkan trial yang lama terlebih dahulu.']);
+            }
+        }
+
         Plan::query()->create([
             ...$data,
-            'is_trial' => (bool) ($data['is_trial'] ?? false),
+            'is_trial' => $isTrial,
             'is_active' => true,
         ]);
 

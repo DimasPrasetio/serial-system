@@ -130,32 +130,63 @@
     </main>
 
     <footer class="relative z-10 border-t border-white/10 bg-slate-950 mt-20">
-        <div class="mx-auto max-w-[1100px] px-5 sm:px-8 py-12">
-            <div class="flex flex-col items-center gap-6 sm:flex-row sm:justify-between">
-                <a href="{{ route('public.home') }}" class="flex items-center gap-3 group">
-                    <div
-                        class="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-brand-400 to-brand-600 p-[1px]">
+        <div class="mx-auto max-w-[1100px] px-5 sm:px-8 py-14">
+            <div class="grid grid-cols-1 gap-10 sm:grid-cols-3">
+
+                {{-- Brand --}}
+                <div class="flex flex-col gap-4">
+                    <a href="{{ route('public.home') }}" class="flex items-center gap-3 group w-fit">
                         <div
-                            class="h-full w-full rounded-lg bg-slate-950 flex items-center justify-center transition-colors duration-300 group-hover:bg-slate-900">
-                            <img src="/icon/logo.png" alt="ElcodeLabs" width="64" height="64" loading="lazy"
-                                decoding="async"
-                                class="h-4 w-auto object-contain opacity-80 group-hover:opacity-100 transition-opacity">
+                            class="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-brand-400 to-brand-600 p-[1px]">
+                            <div
+                                class="h-full w-full rounded-lg bg-slate-950 flex items-center justify-center transition-colors duration-300 group-hover:bg-slate-900">
+                                <img src="/icon/logo.png" alt="ElcodeLabs" width="64" height="64" loading="lazy"
+                                    decoding="async"
+                                    class="h-4 w-auto object-contain opacity-80 group-hover:opacity-100 transition-opacity">
+                            </div>
                         </div>
-                    </div>
-                    <span
-                        class="text-sm font-bold text-slate-300 group-hover:text-white transition-colors">ElcodeLabs</span>
-                </a>
-                <div class="flex flex-wrap justify-center items-center gap-x-8 gap-y-4">
-                    <a href="#services"
-                        class="text-sm font-medium text-slate-500 hover:text-brand-400 transition-colors">Layanan</a>
-                    <a href="#process"
-                        class="text-sm font-medium text-slate-500 hover:text-brand-400 transition-colors">Cara Kerja</a>
-                    <a href="#contact"
-                        class="text-sm font-medium text-slate-500 hover:text-brand-400 transition-colors">Kontak</a>
+                        <span
+                            class="text-sm font-bold text-slate-300 group-hover:text-white transition-colors">ElcodeLabs</span>
+                    </a>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        PT. Prayora Karya Pratama<br>
+                        Bandung, Jawa Barat, Indonesia
+                    </p>
                 </div>
-                <p class="text-sm text-slate-600">
-                    &copy; {{ date('Y') }} ElcodeLabs.
+
+                {{-- Navigasi --}}
+                <div class="flex flex-col gap-3">
+                    <p class="text-xs font-semibold uppercase tracking-widest text-slate-500">Navigasi</p>
+                    <a href="{{ route('public.home') }}#about"
+                        class="text-sm text-slate-500 hover:text-brand-400 transition-colors w-fit">Tentang Kami</a>
+                    <a href="{{ route('public.home') }}#services"
+                        class="text-sm text-slate-500 hover:text-brand-400 transition-colors w-fit">Layanan</a>
+                    <a href="{{ route('public.home') }}#contact"
+                        class="text-sm text-slate-500 hover:text-brand-400 transition-colors w-fit">Kontak &amp; Support</a>
+                </div>
+
+                {{-- Legal --}}
+                <div class="flex flex-col gap-3">
+                    <p class="text-xs font-semibold uppercase tracking-widest text-slate-500">Legal</p>
+                    <a href="{{ route('public.privacy') }}"
+                        class="text-sm text-slate-500 hover:text-brand-400 transition-colors w-fit">Kebijakan Privasi</a>
+                    <a href="{{ route('public.terms') }}"
+                        class="text-sm text-slate-500 hover:text-brand-400 transition-colors w-fit">Ketentuan Layanan</a>
+                </div>
+
+            </div>
+
+            <div class="mt-10 border-t border-white/5 pt-6 flex flex-col items-center gap-2 sm:flex-row sm:justify-between">
+                <p class="text-xs text-slate-600">
+                    &copy; {{ date('Y') }} ElcodeLabs &mdash; PT. Prayora Karya Pratama. Seluruh hak cipta dilindungi.
                 </p>
+                <div class="flex items-center gap-4">
+                    <a href="{{ route('public.privacy') }}"
+                        class="text-xs text-slate-600 hover:text-slate-400 transition-colors">Kebijakan Privasi</a>
+                    <span class="text-slate-700">&middot;</span>
+                    <a href="{{ route('public.terms') }}"
+                        class="text-xs text-slate-600 hover:text-slate-400 transition-colors">Ketentuan Layanan</a>
+                </div>
             </div>
         </div>
     </footer>
