@@ -2,6 +2,8 @@
 
 @section('title', 'ElcodeLabs — Digitalisasi Operasional untuk Bisnis yang Berkembang')
 @section('meta_description', 'ElcodeLabs membantu bisnis mendigitalkan operasional — dari kasir, stok, hingga laporan — agar lebih rapi, cepat, dan terkendali.')
+@section('canonical_url', url('/'))
+@section('og_type', 'website')
 
 @section('content')
     <!-- MODERN LOADER -->

@@ -6,6 +6,20 @@ Format mengikuti prinsip [Keep a Changelog](https://keepachangelog.com/en/1.1.0/
 
 ## [Unreleased]
 
+## [1.2.1] - 2026-03-27
+
+### Added
+- SEO: Open Graph meta tags (`og:title`, `og:description`, `og:url`, `og:image`, `og:type`, `og:site_name`, `og:locale`) ditambahkan ke layout publik agar pratinjau link di sosial media (WhatsApp, Facebook, dsb.) tampil dengan baik.
+- SEO: Twitter Card meta tags (`twitter:card`, `twitter:title`, `twitter:description`, `twitter:image`) ditambahkan ke layout publik.
+- SEO: Tag `<link rel="canonical">` ditambahkan ke layout publik, dapat di-override per halaman lewat `@section('canonical_url', ...)`.
+- SEO: JSON-LD structured data `Organization` (Schema.org) ditambahkan ke layout publik agar Google dapat membaca informasi perusahaan (nama, alamat, kontak) sebagai rich result.
+- Route baru `GET /sitemap.xml` yang menghasilkan sitemap dinamis berisi seluruh halaman publik (`/`, `/kebijakan-privasi`, `/ketentuan-layanan`), dengan URL diambil dari `APP_URL`.
+- Route baru `GET /robots.txt` yang disajikan secara dinamis oleh Laravel; berisi aturan `Disallow` untuk `/admin/`, `/api/`, `/v1/`, serta pointer `Sitemap:` yang otomatis menggunakan `APP_URL`.
+
+### Changed
+- `public/robots.txt` (file statis) digantikan oleh route Laravel dinamis sehingga URL sitemap selalu sinkron dengan konfigurasi `APP_URL`.
+- `company-profile.blade.php` ditambahkan `@section('canonical_url')` dan `@section('og_type')` secara eksplisit untuk halaman beranda.
+
 ## [1.2.0] - 2026-03-20
 
 ### Added

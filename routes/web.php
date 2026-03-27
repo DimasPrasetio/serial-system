@@ -30,6 +30,8 @@ Route::get('/', [PublicController::class, 'companyProfile'])->name('public.home'
 Route::redirect('/company-profile', '/');
 Route::get('/kebijakan-privasi', [PublicController::class, 'privacyPolicy'])->name('public.privacy');
 Route::get('/ketentuan-layanan', [PublicController::class, 'termsOfService'])->name('public.terms');
+Route::get('/sitemap.xml', [PublicController::class, 'sitemap'])->name('public.sitemap');
+Route::get('/robots.txt', [PublicController::class, 'robots']);
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware('guest:admin')->group(function () {

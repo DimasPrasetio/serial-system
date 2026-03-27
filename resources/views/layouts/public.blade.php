@@ -15,9 +15,58 @@
     <title>@yield('title', 'ElcodeLabs — Mitra Digital Bisnis Anda')</title>
     <meta name="description"
         content="@yield('meta_description', 'ElcodeLabs membantu bisnis mendigitalkan operasional — dari kasir, stok, hingga laporan — agar lebih rapi, cepat, dan terkendali.')">
+    <link rel="canonical" href="@yield('canonical_url', url()->current())">
     <link rel="icon" type="image/png" href="/icon/logo.png">
     <link rel="shortcut icon" href="/icon/logo.png">
     <link rel="apple-touch-icon" href="/icon/logo.png">
+
+    {{-- Open Graph --}}
+    <meta property="og:type" content="@yield('og_type', 'website')">
+    <meta property="og:site_name" content="ElcodeLabs">
+    <meta property="og:locale" content="id_ID">
+    <meta property="og:title" content="@yield('title', 'ElcodeLabs — Mitra Digital Bisnis Anda')">
+    <meta property="og:description" content="@yield('meta_description', 'ElcodeLabs membantu bisnis mendigitalkan operasional — dari kasir, stok, hingga laporan — agar lebih rapi, cepat, dan terkendali.')">
+    <meta property="og:url" content="@yield('canonical_url', url()->current())">
+    <meta property="og:image" content="@yield('og_image', asset('icon/og-image.png'))">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="ElcodeLabs — Digitalisasi Operasional untuk Bisnis yang Berkembang">
+
+    {{-- Twitter Card --}}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="@yield('title', 'ElcodeLabs — Mitra Digital Bisnis Anda')">
+    <meta name="twitter:description" content="@yield('meta_description', 'ElcodeLabs membantu bisnis mendigitalkan operasional — dari kasir, stok, hingga laporan — agar lebih rapi, cepat, dan terkendali.')">
+    <meta name="twitter:image" content="@yield('og_image', asset('icon/og-image.png'))">
+
+    {{-- JSON-LD: Organization --}}
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "ElcodeLabs",
+        "legalName": "PT. Prayora Karya Pratama",
+        "url": "{{ url('/') }}",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "{{ asset('icon/logo.png') }}"
+        },
+        "description": "ElcodeLabs membantu bisnis mendigitalkan operasional — dari kasir, stok, hingga laporan — agar lebih rapi, cepat, dan terkendali.",
+        "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Bandung",
+            "addressRegion": "Jawa Barat",
+            "addressCountry": "ID"
+        },
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "contactType": "customer support",
+            "telephone": "+6285173471146",
+            "email": "amandayora1@gmail.com",
+            "availableLanguage": "Indonesian"
+        }
+    }
+    </script>
+    @stack('seo')
     <!-- Fonts -->
     <link rel="preload" as="style"
         href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300..800&display=swap"

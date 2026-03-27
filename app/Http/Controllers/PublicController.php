@@ -55,6 +55,28 @@ class PublicController extends Controller
             ->header('Cache-Control', 'public, max-age=3600, s-maxage=86400');
     }
 
+    /**
+     * Tampilkan robots.txt untuk search engine.
+     */
+    public function robots(): \Illuminate\Http\Response
+    {
+        return response()
+            ->view('robots')
+            ->header('Content-Type', 'text/plain')
+            ->header('Cache-Control', 'public, max-age=86400');
+    }
+
+    /**
+     * Tampilkan sitemap.xml untuk search engine.
+     */
+    public function sitemap(): \Illuminate\Http\Response
+    {
+        return response()
+            ->view('sitemap')
+            ->header('Content-Type', 'application/xml')
+            ->header('Cache-Control', 'public, max-age=43200');
+    }
+
     private function buildCompany(): array
     {
         $company = $this->company;
