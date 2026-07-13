@@ -44,11 +44,11 @@
                             class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75"></span>
                         <span class="relative inline-flex rounded-full h-2 w-2 bg-brand-500"></span>
                     </span>
-                    Solusi Digital untuk UMKM
+                    Solusi Digital untuk Bisnis Anda
                 </span>
 
                 <h1
-                    class="text-3xl font-extrabold leading-tight tracking-normal text-white sm:text-5xl lg:text-[3.5rem] mb-4 sm:mb-6 drop-shadow-2xl">
+                    class="text-3xl font-extrabold leading-tight tracking-normal text-white sm:text-4xl lg:text-5xl mb-4 sm:mb-6 drop-shadow-2xl">
                     Operasional Bisnis<br>
                     <span class="text-gradient inline-block">Lebih Rapi</span> dengan<br>
                     Sistem Digital yang Tepat
@@ -95,6 +95,46 @@
             class="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/40 select-none pointer-events-none hidden md:flex">
             <span class="text-[10px] font-bold uppercase tracking-[0.3em]">Jelajahi</span>
             <div class="w-[1px] h-12 bg-gradient-to-b from-white/40 to-transparent animate-pulse"></div>
+        </div>
+    </section>
+
+
+    <section id="portfolio" class="pub-section relative">
+        <div class="pub-container relative z-10">
+            <div class="mx-auto max-w-2xl text-center gs-reveal">
+                <span class="pub-label">Portofolio</span>
+                <h2 class="pub-h2 mt-4">Dipercaya oleh Bisnis-Bisnis di Berbagai Industri</h2>
+            </div>
+
+            @php
+                $portfolioClients = [
+                    ['name' => 'Pesantren Nurul Quran', 'logo' => 'portofolio/Pesantren_nurul_quran.png'],
+                    ['name' => 'Cafe Tudo', 'logo' => 'portofolio/cafe_Tudo.png'],
+                    ['name' => 'Boffet Luak 50', 'logo' => 'portofolio/boffet_luak_50.jpg'],
+                    ['name' => 'Dragon Fitness', 'logo' => 'portofolio/dragon_fitness.png'],
+                    ['name' => 'Indobraga', 'logo' => 'portofolio/indobraga.webp'],
+                    ['name' => 'OOXOO', 'logo' => 'portofolio/ooxoo.png'],
+                    ['name' => 'Farya Printing', 'logo' => 'portofolio/farya_printing.png', 'filter' => 'brightness-75 contrast-125'],
+                    ['name' => 'TB Sumber Abadi', 'logo' => 'portofolio/tb_sumber_abadi.png'],
+                    ['name' => 'Tiffany', 'logo' => 'portofolio/Tiffany.jpg'],
+                    ['name' => 'Moisso', 'logo' => 'portofolio/moisso.png'],
+                ];
+            @endphp
+
+            <div class="mt-16 grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-6 lg:grid-cols-5">
+                @foreach ($portfolioClients as $client)
+                    <div
+                        class="gs-reveal group flex h-36 flex-col items-center justify-center gap-3 rounded-3xl bg-white p-5 shadow-xl ring-1 ring-black/5 transition-all duration-500 hover:-translate-y-1.5 hover:shadow-glow hover:ring-brand-500/30">
+                        <img src="{{ asset($client['logo']) }}" alt="Logo {{ $client['name'] }}" loading="lazy"
+                            decoding="async"
+                            class="h-14 w-auto max-w-[80%] object-contain transition-transform duration-500 ease-out group-hover:scale-110 sm:h-16 {{ $client['filter'] ?? '' }}">
+                        <span
+                            class="text-center text-xs font-semibold leading-tight text-slate-500 transition-colors duration-500 group-hover:text-brand-600">
+                            {{ $client['name'] }}
+                        </span>
+                    </div>
+                @endforeach
+            </div>
         </div>
     </section>
 
@@ -476,7 +516,7 @@
         <div class="pub-container relative z-10">
             <div class="mx-auto max-w-2xl text-center gs-reveal">
                 <span class="pub-label mb-3">Kontak</span>
-                <h2 class="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-5xl mb-6">
+                <h2 class="text-3xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-5xl mb-6">
                     Mulai dari Diskusi 30 Menit
                 </h2>
                 <p class="text-lg leading-relaxed text-slate-300">

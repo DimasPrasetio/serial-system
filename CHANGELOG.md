@@ -6,6 +6,15 @@ Format mengikuti prinsip [Keep a Changelog](https://keepachangelog.com/en/1.1.0/
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-07-13
+
+### Added
+- Section publik baru **Portofolio** di landing page (`company-profile.blade.php`) menampilkan 10 logo klien nyata beserta nama bisnisnya, dengan animasi hover (lift, glow, dan scale) yang konsisten dengan bahasa desain landing page.
+
+### Changed
+- Ukuran heading Hero dan seluruh section (`.pub-h2`) pada landing page diperkecil ke skala yang lebih proporsional (breakpoint `sm`/`lg` sebelumnya terlalu besar).
+- Badge Hero diubah dari "Solusi Digital untuk UMKM" menjadi "Solusi Digital untuk Bisnis Anda" agar tidak membatasi target ke UMKM saja.
+
 ## [1.2.1] - 2026-03-27
 
 ### Added
